@@ -106,7 +106,7 @@ export default function TransportControls({
           onClick={onProcess}
           aria-label="Process clip"
           className={[
-            'group flex items-center justify-center gap-2.5 flex-1 h-11 rounded-xl',
+            'cursor-pointer group flex items-center justify-center gap-2.5 flex-1 h-11 rounded-xl',
             'font-["Syne"] text-sm font-semibold tracking-wide text-white',
             'bg-gradient-to-r from-[var(--primary)] to-[#7c3aed]',
             'shadow-[0_4px_16px_var(--primary-glow)]',

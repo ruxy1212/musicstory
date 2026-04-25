@@ -11,7 +11,7 @@ export function Providers({ children }: ProviderProps) {
   return (
     <ProgressProvider
       height="3px"
-      color="var(--color-base-content)"
+      color="var(--color-primary)"
       options={{ showSpinner: false }}
       shallowRouting
     >
