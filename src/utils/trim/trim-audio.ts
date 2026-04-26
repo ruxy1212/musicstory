@@ -1,5 +1,4 @@
 export const trimAudio = async (file: File | Blob, start: number, stop: number) => {
-  console.log(start, stop) //117.93594780882331 143.3034392205878
   const audioCtx = new (window.AudioContext  || (window as any).webkitAudioContext)();
 
   // Get audio data
@@ -12,29 +11,30 @@ export const trimAudio = async (file: File | Blob, start: number, stop: number) 
   }
 
   // Decode the audio
-  const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+  const originalBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+  const duration = stop - start;
+  const targetSampleRate = 16000;
+  const targetChannels = 1;
 
-  // Calculate frames based on sample rate
-  const startFrame = Math.floor(start * audioBuffer.sampleRate);
-  const endFrame = Math.floor(stop * audioBuffer.sampleRate);
-  const frameCount = endFrame - startFrame;
+  // Calculate number of samples needed at target sample rate
+  const targetLength = Math.ceil(duration * targetSampleRate);
 
-  // Create a new buffer for the trimmed segment
-  const trimmedBuffer = audioCtx.createBuffer(
-    audioBuffer.numberOfChannels,
-    frameCount,
-    audioBuffer.sampleRate,
-  )
+  const offlineCtx = new OfflineAudioContext({
+    numberOfChannels: targetChannels,
+    length: targetLength,
+    sampleRate: targetSampleRate,
+  });
 
-  // Copy the exact segment data
-  for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
-    const channelData = audioBuffer.getChannelData(channel)
-    const trimmedData = trimmedBuffer.getChannelData(channel);
-    for (let i = 0; i < frameCount; i++) {
-      trimmedData[i] = channelData[startFrame + i];
-    }
-  }
+  // Create a buffer source and set the original audio
+  const source = offlineCtx.createBufferSource();
+  source.buffer = originalBuffer;
 
+  // Connect directly to destination
+  source.connect(offlineCtx.destination);
+  source.start(0, start, duration);
+  const trimmedBuffer = await offlineCtx.startRendering();
+
+  // Encode to WAV
   return encodeBufferToWavBlob(trimmedBuffer);
 }
 

@@ -71,7 +71,7 @@ const Waveform = forwardRef<WaveformHandle, WaveformProps>(
           end: Math.min(30, duration),
           drag: true,
           resize: true,
-          color: 'rgba(91, 110, 245, 0.13)',
+          color: 'rgba(91, 110, 245, 0.3)',
         })
 
         region.on('update-end', () => {

@@ -5,7 +5,7 @@ import UploadZone from '@/components/trimmer/upload-zone'
 import Waveform, { WaveformHandle } from '@/components/trimmer/waveform'
 import TransportControls from '@/components/trimmer/transport-controls'
 import { ChevronRight, X } from 'lucide-react'
-import { trimAudio } from '@/utils/trimmer/trim-audio'
+import { trimAudio } from '@/utils/trim/trim-audio'
 
 export default function AudioTrimmer() {
   const waveformRef = useRef<WaveformHandle>(null)
@@ -41,14 +41,19 @@ export default function AudioTrimmer() {
       // const a = document.createElement('a')
       // a.href = url
       // a.download = 'trimmed-audio.wav'
-      // a.click()
-      const url = URL.createObjectURL(wavBlob)
-      const audio = document.createElement('audio')
-      audio.controls = true
-      audio.src = url
-      document.body.appendChild(audio)
+      // a.click() 
+      // =============================== // 
+      // const url = URL.createObjectURL(wavBlob)
+      // const audio = document.createElement('audio')
+      // audio.controls = true
+      // audio.src = url
+      // document.body.appendChild(audio)
       // URL.revokeObjectURL(url)
-      await fetch('/api/transcribe', { method: 'POST', body: form })
+      const transcription = await fetch('/api/transcribe', { method: 'POST', body: form })
+      console.log(transcription)
+//       const isValid = (res) => {
+//   return (res?.segments?.filter(s => s.text?.trim()).length ?? 0) >= 2;
+// };
     } catch (error) {
       console.error("Error trimming/uploading audio:", error)
     } finally {
