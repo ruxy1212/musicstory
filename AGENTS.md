@@ -2,7 +2,7 @@
 
 > This file is the authoritative guide for AI coding agents building this application.
 > Read it fully before writing any code. Follow the phases in order. Do not skip ahead.
-
+DO NOT RUN ANY NPM/PNPM COMMANDS, THE USER WILL MANUALLY RUN THEM AT THE END OF EACH PASS (WHERE NECESSARY)
 ---
 
 ## Project Identity

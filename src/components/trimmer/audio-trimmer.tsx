@@ -5,16 +5,17 @@ import UploadZone from '@/components/trimmer/upload-zone'
 import Waveform, { WaveformHandle } from '@/components/trimmer/waveform'
 import TransportControls from '@/components/trimmer/transport-controls'
 import { ChevronRight, X } from 'lucide-react'
+import { trimAudio } from '@/utils/trimmer/trim-audio'
 
 export default function AudioTrimmer() {
   const waveformRef = useRef<WaveformHandle>(null)
 
-  const [file, setFile]               = useState<File | null>(null)
-  const [isReady, setIsReady]         = useState(false)
-  const [isPlaying, setIsPlaying]     = useState(false)
+  const [file, setFile] = useState<File | null>(null)
+  const [isReady, setIsReady] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
-  const [region, setRegion]           = useState({ start: 0, end: 30 })
+  const [region, setRegion] = useState({ start: 0, end: 30 })
 
   const handleFile = useCallback((f: File) => {
     setFile(f)
@@ -31,11 +32,25 @@ export default function AudioTrimmer() {
     if (!file) return
     setIsProcessing(true)
     try {
+      const wavBlob = await trimAudio(file, region.start, region.end)
       const form = new FormData()
-      form.append('file', file)
+      form.append('file', wavBlob, 'trimmed_audio.wav')
       form.append('start', region.start.toString())
       form.append('end', region.end.toString())
-      await fetch('/api/upload', { method: 'POST', body: form })
+      // const url = URL.createObjectURL(wavBlob)
+      // const a = document.createElement('a')
+      // a.href = url
+      // a.download = 'trimmed-audio.wav'
+      // a.click()
+      const url = URL.createObjectURL(wavBlob)
+      const audio = document.createElement('audio')
+      audio.controls = true
+      audio.src = url
+      document.body.appendChild(audio)
+      // URL.revokeObjectURL(url)
+      await fetch('/api/transcribe', { method: 'POST', body: form })
+    } catch (error) {
+      console.error("Error trimming/uploading audio:", error)
     } finally {
       setIsProcessing(false)
     }
