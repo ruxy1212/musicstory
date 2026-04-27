@@ -6,7 +6,7 @@ import Waveform, { WaveformHandle } from '@/components/trimmer/waveform'
 import TransportControls from '@/components/trimmer/transport-controls'
 import { ChevronRight, X } from 'lucide-react'
 import { trimAudio } from '@/utils/trim/trim-audio'
-import { EnrichedTranscription, VideoGeneratorHandle } from '@/types'
+import { EnrichedTranscription } from '@/types'
 
 interface AudioTrimmerProps {
   setAudioBlob: Dispatch<SetStateAction<Blob | undefined>>
@@ -15,7 +15,6 @@ interface AudioTrimmerProps {
 
 export default function AudioTrimmer({ setAudioBlob, setTranscriptions }: AudioTrimmerProps) {
   const waveformRef = useRef<WaveformHandle>(null)
-  const videoRef = useRef<VideoGeneratorHandle>(null);
 
   const [file, setFile] = useState<File | null>(null)
   const [isReady, setIsReady] = useState(false)
