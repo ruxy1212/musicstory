@@ -10,3 +10,60 @@ export interface TranscriptionResponse {
   text: string;
   segments?: TranscriptionSegment[];
 }
+
+export interface EnrichedSegment {
+  start: number;
+  end: number;
+  text: string;
+  prompt: string;
+  context: string;
+}
+
+export interface EnrichedTranscription {
+  text: string;
+  segments: EnrichedSegment[];
+}
+
+export interface SegmentStatus {
+  stage: "pending" | "generating" | "complete" | "error";
+  queue: boolean;
+  code?: string;
+  success?: boolean;
+  size?: number;
+  position?: number;
+  eta?: number;
+  message?: string;
+  progress_data?: Array<{
+    progress: number | null;
+    index: number | null;
+    length: number | null;
+    unit: string | null;
+    desc: string | null;
+  }>;
+  time?: Date;
+}
+
+export interface SegmentResult {
+  index: number;
+  segment: EnrichedSegment;
+  videoUrl: string | null;
+  seed: number | null;
+  status: SegmentStatus;
+  failed: boolean;
+}
+
+export interface VideoGeneratorProps {
+  enrichedTranscriptions: { text: string; segments: EnrichedSegment[] };
+  audioBlob: Blob | null;
+  token: `hf_${string}`;
+}
+
+export interface CompositionProps {
+  results: SegmentResult[];
+  audioUrl: string | null;
+}
+
+export interface VideoGeneratorHandle {
+  runGeneration: () => void;
+}
+

@@ -6,9 +6,12 @@ import Waveform, { WaveformHandle } from '@/components/trimmer/waveform'
 import TransportControls from '@/components/trimmer/transport-controls'
 import { ChevronRight, X } from 'lucide-react'
 import { trimAudio } from '@/utils/trim/trim-audio'
+import { EnrichedTranscription, VideoGeneratorHandle } from '@/types'
+import VideoGenerator from '../video-generator'
 
 export default function AudioTrimmer() {
   const waveformRef = useRef<WaveformHandle>(null)
+  const videoRef = useRef<VideoGeneratorHandle>(null);
 
   const [file, setFile] = useState<File | null>(null)
   const [isReady, setIsReady] = useState(false)
@@ -16,6 +19,8 @@ export default function AudioTrimmer() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [region, setRegion] = useState({ start: 0, end: 30 })
+  const [transcriptions, setTranscriptions] = useState<EnrichedTranscription | undefined>(undefined)
+  const [audioBlob, setAudioBlob] = useState<Blob | undefined>(undefined)
 
   const handleFile = useCallback((f: File) => {
     setFile(f)
@@ -65,6 +70,8 @@ export default function AudioTrimmer() {
       })
       const enrichedTranscriptionJson = await enrichedTranscription.json()
       console.log(enrichedTranscriptionJson)
+      setAudioBlob(wavBlob)
+      setTranscriptions(enrichedTranscriptionJson)
     } catch (error) {
       console.error("Error trimming/uploading audio:", error)
     } finally {
@@ -167,6 +174,14 @@ export default function AudioTrimmer() {
             </>
           )}
         </div>
+        {audioBlob && transcriptions && transcriptions.segments && (
+          <VideoGenerator
+            ref={videoRef}
+            enrichedTranscriptions={transcriptions}
+            audioBlob={audioBlob}
+            token={(process.env.NEXT_PUBLIC_HF_KEY || '') as `hf_${string}`}
+          />
+        )}
       </div>
     </div>
   )
