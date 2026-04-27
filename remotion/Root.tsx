@@ -1,5 +1,5 @@
 import { Composition } from "remotion";
-import { FullComposition } from "../components/VideoGenerator";
+import { FullComposition } from "@/components/video-generator/full-composition";
 
 const FPS = 30;
 

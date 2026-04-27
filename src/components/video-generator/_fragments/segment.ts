@@ -3,20 +3,6 @@ import { EnrichedSegment, SegmentResult, SegmentStatus } from "@/types";
 import { clampDuration } from "@/utils/video/helpers";
 import { Dispatch, SetStateAction, useCallback } from "react";
 
-const updateResult = useCallback((index: number, patch: Partial<SegmentResult>, setResults: Dispatch<SetStateAction<SegmentResult[]>>) => {
-  setResults((prev) =>
-    prev.map((r) => (r.index === index ? { ...r, ...patch } : r))
-  );
-}, []);
-
-const updateStatus = useCallback((index: number, patch: Partial<SegmentStatus>, setResults: Dispatch<SetStateAction<SegmentResult[]>>) => {
-  setResults((prev) =>
-    prev.map((r) =>
-      r.index === index ? { ...r, status: { ...r.status, ...patch } } : r
-    )
-  );
-}, []);
-
 // ── Generate one segment ──────────────────────────────────────────────────
 interface GenerateSegmentProps {
   seg: EnrichedSegment;
@@ -26,7 +12,21 @@ interface GenerateSegmentProps {
 }
 
 export async function generateSegment({seg, index, token, setResults}: GenerateSegmentProps) {
-  updateStatus(index, { stage: "generating", queue: true, time: new Date() }, setResults);
+  const updateResult = useCallback((index: number, patch: Partial<SegmentResult>) => {
+    setResults((prev) =>
+      prev.map((r) => (r.index === index ? { ...r, ...patch } : r))
+    );
+  }, []);
+
+  const updateStatus = useCallback((index: number, patch: Partial<SegmentStatus>) => {
+    setResults((prev) =>
+      prev.map((r) =>
+        r.index === index ? { ...r, status: { ...r.status, ...patch } } : r
+      )
+    );
+  }, []);
+
+  updateStatus(index, { stage: "generating", queue: true, time: new Date() });
 
   try {
     const app = await Client.connect("Lightricks/ltx-video-distilled", {
@@ -60,7 +60,7 @@ export async function generateSegment({seg, index, token, setResults}: GenerateS
           message: s.message,
           progress_data: s.progress_data,
           time: s.time ? new Date(s.time) : new Date(),
-        }, setResults);
+        });
       }
 
       if (msg.type === "data") {
@@ -82,7 +82,7 @@ export async function generateSegment({seg, index, token, setResults}: GenerateS
           seed,
           failed: !videoUrl,
           status: { stage: "complete", queue: false, success: true, time: new Date() },
-        }, setResults);
+        });
       }
     }
   } catch (err: any) {
@@ -94,6 +94,6 @@ export async function generateSegment({seg, index, token, setResults}: GenerateS
         message: err?.message ?? "Unknown error",
         time: new Date(),
       },
-    }, setResults);
+    });
   }
 }
