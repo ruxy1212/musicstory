@@ -38,7 +38,6 @@ const transcriptionViaChat = async (
   provider: keyof typeof providers
 ): Promise<TranscriptionResponse> => {
   const arrayBuffer = await audio.arrayBuffer();
-  console.log(audio.size);
   const base64Audio = Buffer.from(arrayBuffer).toString("base64");
 
   const response = await client.chat.completions.create({
@@ -90,7 +89,7 @@ export const audioTranscribeAI = async (
   const config = providers[provider];
   const client = providerClient(provider, apiKey);
 
-  if (config.method === "chat") { console.log('in chat')
+  if (config.method === "chat") {
     return transcriptionViaChat(client, audio, provider);
   }
 

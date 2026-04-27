@@ -9,12 +9,10 @@ import { trimAudio } from '@/utils/trim/trim-audio'
 import { EnrichedTranscription } from '@/types'
 
 interface AudioTrimmerProps {
-  setAudioBlob: Dispatch<SetStateAction<Blob | undefined>>
-  setTranscriptions: Dispatch<SetStateAction<EnrichedTranscription | undefined>>
-  generateVideo: () => void
+  onGenerate: (blob: Blob, transcription: EnrichedTranscription) => void;
 }
 
-export default function AudioTrimmer({ setAudioBlob, setTranscriptions, generateVideo }: AudioTrimmerProps) {
+export default function AudioTrimmer({ onGenerate }: AudioTrimmerProps) {
   const waveformRef = useRef<WaveformHandle>(null)
 
   const [file, setFile] = useState<File | null>(null)
@@ -59,9 +57,7 @@ export default function AudioTrimmer({ setAudioBlob, setTranscriptions, generate
         body: JSON.stringify(transcriptionJson)
       })
       const enrichedTranscriptionJson = await enrichedTranscription.json()
-      setAudioBlob(wavBlob)
-      setTranscriptions(enrichedTranscriptionJson)
-      generateVideo()
+      onGenerate(wavBlob, enrichedTranscriptionJson)
     } catch (error) {
       console.error("Error trimming/uploading audio:", error)
     } finally {

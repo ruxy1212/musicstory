@@ -12,19 +12,19 @@ interface GenerateSegmentProps {
 }
 
 export async function generateSegment({seg, index, token, setResults}: GenerateSegmentProps) {
-  const updateResult = useCallback((index: number, patch: Partial<SegmentResult>) => {
+  const updateResult = (index: number, patch: Partial<SegmentResult>) => {
     setResults((prev) =>
       prev.map((r) => (r.index === index ? { ...r, ...patch } : r))
     );
-  }, []);
+  };
 
-  const updateStatus = useCallback((index: number, patch: Partial<SegmentStatus>) => {
+  const updateStatus = (index: number, patch: Partial<SegmentStatus>) => {
     setResults((prev) =>
       prev.map((r) =>
         r.index === index ? { ...r, status: { ...r.status, ...patch } } : r
       )
     );
-  }, []);
+  };
 
   updateStatus(index, { stage: "generating", queue: true, time: new Date() });
 
@@ -45,10 +45,11 @@ export async function generateSegment({seg, index, token, setResults}: GenerateS
       mode: "text-to-video",
       duration_ui: duration,
     });
+    console.log(`${seg.prompt} \nContext: ${seg.context}`, duration);
 
     for await (const msg of job) {
       if (msg.type === "status") {
-        console.log('new status', index)
+        console.log('new status', index, msg)
         const s = msg as any;
         updateStatus(index, {
           stage: s.stage === "complete" ? "complete" : "generating",
@@ -65,6 +66,7 @@ export async function generateSegment({seg, index, token, setResults}: GenerateS
       }
 
       if (msg.type === "data") {
+        console.log('new data', msg.data)
         const [fileData, seed] = (msg as any).data as [
           {
             url: string;

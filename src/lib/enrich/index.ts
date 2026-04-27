@@ -26,7 +26,7 @@ Return a JSON array of ${validSegments.length} objects, one per segment,
 each with "prompt" and "context" keys.`;
 
   const response = await client.chat.completions.create({
-    model: providers[provider].transcription_model,
+    model: providers[provider].completion_model,
     temperature: 0.7,
     messages: [
       { role: "system", content: systemPrompt },

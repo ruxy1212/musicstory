@@ -10,10 +10,10 @@ export interface ComposeVideoProps {
 }
 
 export async function composeVideo({ audioBlob, results, setComposedVideoUrl, setPhase }: ComposeVideoProps) {
-  const audioUrlRef = useRef<string | null>(null);
+  let audioUrl: string | null = null;
 
   if (audioBlob) {
-    audioUrlRef.current = URL.createObjectURL(audioBlob);
+    audioUrl = URL.createObjectURL(audioBlob);
   }
 
   try {
@@ -22,7 +22,7 @@ export async function composeVideo({ audioBlob, results, setComposedVideoUrl, se
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         results: results,
-        audioUrl: audioUrlRef.current,
+        audioUrl: audioUrl,
       }),
     });
 

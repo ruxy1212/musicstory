@@ -203,6 +203,21 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
         {phase === "done" && !composedVideoUrl && (
           <Fallback results={results} />
         )}
+        <button
+          onClick={runGeneration}
+          style={{
+            padding: "10px 20px",
+            background: "transparent",
+            color: "#e8e8e0",
+            border: "0.5px solid #ffffff33",
+            borderRadius: 6,
+            fontFamily: "inherit",
+            fontSize: 13,
+            cursor: "pointer",
+          }}
+        >
+          ReGenerate Video
+        </button>
       </div>
     );
   }
