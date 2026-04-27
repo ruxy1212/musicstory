@@ -50,17 +50,21 @@ export default function AudioTrimmer() {
       // document.body.appendChild(audio)
       // URL.revokeObjectURL(url)
       const transcription = await fetch('/api/transcribe', { method: 'POST', body: form })
+      const transcriptionJson = await transcription.json()
+      if (!transcriptionJson || !transcriptionJson.text || !transcriptionJson.segments) {
+        //show error
+        return 
+      }
+
       const enrichedTranscription = await fetch('/api/enrich', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(transcription)
+        body: JSON.stringify(transcriptionJson)
       })
-      console.log(transcription)
-//       const isValid = (res) => {
-//   return (res?.segments?.filter(s => s.text?.trim()).length ?? 0) >= 2;
-// };
+      const enrichedTranscriptionJson = await enrichedTranscription.json()
+      console.log(enrichedTranscriptionJson)
     } catch (error) {
       console.error("Error trimming/uploading audio:", error)
     } finally {
