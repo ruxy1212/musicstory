@@ -1,16 +1,8 @@
 import { TranscriptionResponse } from "@/types";
 import { providerClient, providers } from "@/lib/providers";
 
-const isValid = (response: TranscriptionResponse) => {
-  return (response?.segments?.filter(s => s.text?.trim()).length ?? 0) >= 2;
-};
-
 export const enrichSegments = async (transcriptions: TranscriptionResponse, provider: keyof typeof providers,
   apiKey?: string) => {
-  if (!isValid(transcriptions)) {
-    throw new Error("Response does not meet minimum segment requirement.");
-  }
-
   const validSegments = transcriptions.segments?.filter(s => s.text?.trim());
   if (!validSegments || validSegments.length < 2) {
     throw new Error("Response does not meet minimum segment requirement.");
@@ -57,7 +49,7 @@ each with "prompt" and "context" keys.`;
 
   // Map enrichment back onto segments — skipping empty-text ones
   let enrichedIdx = 0;
-  const enrichedSegments = transcriptions.segments?.map(segment => {
+  const enrichedSegments = validSegments.map(segment => {
     if (!segment.text?.trim()) return { ...segment };
 
     const enrichment = parsed[enrichedIdx];

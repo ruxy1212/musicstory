@@ -48,6 +48,7 @@ export async function generateSegment({seg, index, token, setResults}: GenerateS
 
     for await (const msg of job) {
       if (msg.type === "status") {
+        console.log('new status', index)
         const s = msg as any;
         updateStatus(index, {
           stage: s.stage === "complete" ? "complete" : "generating",

@@ -11,9 +11,10 @@ import { EnrichedTranscription } from '@/types'
 interface AudioTrimmerProps {
   setAudioBlob: Dispatch<SetStateAction<Blob | undefined>>
   setTranscriptions: Dispatch<SetStateAction<EnrichedTranscription | undefined>>
+  generateVideo: () => void
 }
 
-export default function AudioTrimmer({ setAudioBlob, setTranscriptions }: AudioTrimmerProps) {
+export default function AudioTrimmer({ setAudioBlob, setTranscriptions, generateVideo }: AudioTrimmerProps) {
   const waveformRef = useRef<WaveformHandle>(null)
 
   const [file, setFile] = useState<File | null>(null)
@@ -43,18 +44,6 @@ export default function AudioTrimmer({ setAudioBlob, setTranscriptions }: AudioT
       form.append('file', wavBlob, 'trimmed_audio.wav')
       form.append('start', region.start.toString())
       form.append('end', region.end.toString())
-      // const url = URL.createObjectURL(wavBlob)
-      // const a = document.createElement('a')
-      // a.href = url
-      // a.download = 'trimmed-audio.wav'
-      // a.click() 
-      // =============================== // 
-      // const url = URL.createObjectURL(wavBlob)
-      // const audio = document.createElement('audio')
-      // audio.controls = true
-      // audio.src = url
-      // document.body.appendChild(audio)
-      // URL.revokeObjectURL(url)
       const transcription = await fetch('/api/transcribe', { method: 'POST', body: form })
       const transcriptionJson = await transcription.json()
       if (!transcriptionJson || !transcriptionJson.text || !transcriptionJson.segments) {
@@ -70,9 +59,9 @@ export default function AudioTrimmer({ setAudioBlob, setTranscriptions }: AudioT
         body: JSON.stringify(transcriptionJson)
       })
       const enrichedTranscriptionJson = await enrichedTranscription.json()
-      console.log(enrichedTranscriptionJson)
       setAudioBlob(wavBlob)
       setTranscriptions(enrichedTranscriptionJson)
+      generateVideo()
     } catch (error) {
       console.error("Error trimming/uploading audio:", error)
     } finally {

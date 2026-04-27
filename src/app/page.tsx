@@ -11,9 +11,14 @@ export default function Page() {
   const [transcriptions, setTranscriptions] = useState<EnrichedTranscription | undefined>(undefined)
   const [audioBlob, setAudioBlob] = useState<Blob | undefined>(undefined)
 
+  const generateVideo = () => {
+    if (!audioBlob || !transcriptions) return
+    videoRef.current?.runGeneration()
+  }
+
   return (
     <>
-      <AudioTrimmer setTranscriptions={setTranscriptions} setAudioBlob={setAudioBlob} />
+      <AudioTrimmer setTranscriptions={setTranscriptions} setAudioBlob={setAudioBlob} generateVideo={generateVideo} />
       {audioBlob && transcriptions && transcriptions.segments && (
         <VideoGenerator
           ref={videoRef}
