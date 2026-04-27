@@ -50,6 +50,13 @@ export default function AudioTrimmer() {
       // document.body.appendChild(audio)
       // URL.revokeObjectURL(url)
       const transcription = await fetch('/api/transcribe', { method: 'POST', body: form })
+      const enrichedTranscription = await fetch('/api/enrich', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(transcription)
+      })
       console.log(transcription)
 //       const isValid = (res) => {
 //   return (res?.segments?.filter(s => s.text?.trim()).length ?? 0) >= 2;

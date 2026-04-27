@@ -1,43 +1,6 @@
+import { TranscriptionResponse, TranscriptionSegment } from "@/types";
 import OpenAI, { toFile } from "openai";
-
-const providers = {
-  openai: {
-    baseURL: "https://api.openai.com/v1",
-    transcriber: "whisper-1",
-    method: "transcription" as const,
-  },
-  openrouter: {
-    baseURL: "https://openrouter.ai/api/v1",
-    transcriber: "openai/whisper-1",
-    method: "transcription" as const,
-  },
-  groq: {
-    baseURL: "https://api.groq.com/openai/v1",
-    transcriber: "whisper-large-v3-turbo",
-    method: "transcription" as const,
-  },
-  mistral: {
-    baseURL: "https://api.mistral.ai/v1",
-    transcriber: "voxtral-mini-latest",
-    method: "transcription" as const,
-  },
-  gemini: {
-    baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
-    transcriber: "gemini-2.5-flash-lite",
-    method: "chat" as const,
-  },
-};
-
-type Segment = {
-  start: number;
-  end: number;
-  text: string;
-};
-
-type TranscriptionResponse = {
-  text: string;
-  segments?: Segment[];
-};
+import { providerClient, providers } from "@/lib/providers";
 
 // Providers that return verbose_json with segments
 const transcriptionViaAPI = async (
@@ -51,12 +14,12 @@ const transcriptionViaAPI = async (
 
   const transcription = await client.audio.transcriptions.create({
     file,
-    model: providers[provider].transcriber,
+    model: providers[provider].transcription_model,
     response_format: "verbose_json",
   });
 
   // verbose_json returns segments with start/end timestamps
-  const segments: Segment[] = (transcription.segments ?? []).map((s) => ({
+  const segments: TranscriptionSegment[] = (transcription.segments ?? []).map((s) => ({
     start: s.start,
     end: s.end,
     text: s.text.trim(),
@@ -79,7 +42,7 @@ const transcriptionViaChat = async (
   const base64Audio = Buffer.from(arrayBuffer).toString("base64");
 
   const response = await client.chat.completions.create({
-    model: providers[provider].transcriber,
+    model: providers[provider].transcription_model,
     messages: [
       {
         role: "user",
@@ -125,11 +88,7 @@ export const audioTranscribeAI = async (
   apiKey?: string
 ): Promise<TranscriptionResponse> => {
   const config = providers[provider];
-
-  const client = new OpenAI({
-    apiKey: apiKey,
-    baseURL: config.baseURL,
-  });
+  const client = providerClient(provider, apiKey);
 
   if (config.method === "chat") { console.log('in chat')
     return transcriptionViaChat(client, audio, provider);
