@@ -7,7 +7,7 @@ export function RemotionRoot() {
   return (
     <Composition
       id="FullVideo"
-      component={FullComposition}
+      component={FullComposition as unknown as React.ComponentType<Record<string, unknown>>}
       durationInFrames={1800} // override dynamically via inputProps
       fps={FPS}
       width={704}
