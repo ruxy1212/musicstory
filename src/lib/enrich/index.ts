@@ -17,10 +17,10 @@ export const enrichSegments = async (transcriptions: TranscriptionResponse, prov
   }
 
   const client = providerClient(provider, apiKey);
-  const systemPrompt = `You are a creative director helping generate image prompts for a visual storyboard.
+  const systemPrompt = `You are a creative director helping generate video prompts for a visual storyboard.
 Given a list of lyric/speech segments and the overall narrative, return ONLY a JSON array.
 Each element must have exactly two string keys: "prompt" and "context".
-- "prompt": a vivid image generation prompt describing the visual scene for that segment.
+- "prompt": a vivid video generation prompt describing the visual scene for that segment.
 - "context": a comma-separated string of 5-8 style/mood/scene-consistency words that apply
   across ALL segments to keep the visual world cohesive.
 Return ONLY the raw JSON array. No markdown, no explanation.`;
@@ -48,11 +48,11 @@ each with "prompt" and "context" keys.`;
     const cleaned = raw.replace(/```json|```/g, "").trim();
     parsed = JSON.parse(cleaned);
   } catch {
-    throw new Error("Failed to parse OpenAI response as JSON.");
+    throw new Error("Failed to parse AI response as JSON.");
   }
 
   if (!Array.isArray(parsed)) {
-    throw new Error("OpenAI did not return a JSON array.");
+    throw new Error("AI did not return a JSON array.");
   }
 
   // Map enrichment back onto segments — skipping empty-text ones
