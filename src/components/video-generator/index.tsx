@@ -32,17 +32,35 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
     const [phase, setPhase] = useState<"idle" | "generating" | "composing" | "done">("idle");
     const [composedVideoUrl, setComposedVideoUrl] = useState<string | null>(null);
 
-    // ── Generate all segments sequentially ───────────────────────────────────
+    // Generate all segments sequentially
     async function runGeneration() {
       setPhase("generating");
 
+      let firstQuotaIndex: number | null = null;
       for (let i = 0; i < segments.length; i++) {
-        await generateSegment({
+        const { quotaError } = await generateSegment({
           seg: segments[i],
           index: i,
-          token: token as `hf_${string}`,
-          setResults
+          token: "" as `hf_${string}`, // use IP quota
+          setResults,
         });
+
+        if (quotaError) {
+          firstQuotaIndex = i;
+          break;
+        }
+      }
+
+      if (firstQuotaIndex !== null) {
+        for (let i = firstQuotaIndex; i < segments.length; i++) {
+          await generateSegment({
+            seg: segments[i],
+            index: i,
+            token: token as `hf_${string}`, // use real token on retry
+            setResults,
+            isRetry: true,
+          });
+        }
       }
 
       setPhase("composing");

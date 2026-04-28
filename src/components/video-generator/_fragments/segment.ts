@@ -3,7 +3,6 @@ import { EnrichedSegment, SegmentResult, SegmentStatus } from "@/types";
 import { clampDuration } from "@/utils/video/helpers";
 import { Dispatch, SetStateAction, useCallback } from "react";
 
-// ── Generate one segment ──────────────────────────────────────────────────
 interface GenerateSegmentProps {
   seg: EnrichedSegment;
   index: number;
@@ -11,7 +10,7 @@ interface GenerateSegmentProps {
   setResults: Dispatch<SetStateAction<SegmentResult[]>>;
 }
 
-export async function generateSegment({seg, index, token, setResults}: GenerateSegmentProps) {
+export async function generateSegment({seg, index, token, setResults, isRetry = false}: GenerateSegmentProps & { isRetry?: boolean }) {
   const updateResult = (index: number, patch: Partial<SegmentResult>) => {
     setResults((prev) =>
       prev.map((r) => (r.index === index ? { ...r, ...patch } : r))
@@ -45,28 +44,42 @@ export async function generateSegment({seg, index, token, setResults}: GenerateS
       mode: "text-to-video",
       duration_ui: duration,
     });
-    console.log(`${seg.prompt} \nContext: ${seg.context}`, duration);
 
     for await (const msg of job) {
       if (msg.type === "status") {
-        console.log('new status', index, msg)
         const s = msg as any;
-        updateStatus(index, {
-          stage: s.stage === "complete" ? "complete" : "generating",
-          queue: s.queue ?? false,
-          code: s.code,
-          success: s.success,
-          size: s.size,
-          position: s.position,
-          eta: s.eta,
-          message: s.message,
-          progress_data: s.progress_data,
-          time: s.time ? new Date(s.time) : new Date(),
-        });
+
+        if (s.stage === "error") {
+          const isQuota = !isRetry && (s.message ?? "").toLowerCase().includes("quota");
+
+          updateResult(index, {
+            failed: true,
+            status: {
+              stage: "error",
+              queue: false,
+              message: s.message ?? "Unknown error",
+              time: new Date(),
+            },
+          });
+          job.cancel();
+          return { quotaError: isQuota };
+        } else {
+          updateStatus(index, {
+            stage: s.stage === "complete" ? "complete" : "generating",
+            queue: s.queue ?? false,
+            code: s.code,
+            success: s.success,
+            size: s.size,
+            position: s.position,
+            eta: s.eta,
+            message: s.message,
+            progress_data: s.progress_data,
+            time: s.time ? new Date(s.time) : new Date(),
+          });
+        }
       }
 
       if (msg.type === "data") {
-        console.log('new data', msg.data)
         const [fileData, seed] = (msg as any).data as [
           {
             url: string;
@@ -86,6 +99,8 @@ export async function generateSegment({seg, index, token, setResults}: GenerateS
           failed: !videoUrl,
           status: { stage: "complete", queue: false, success: true, time: new Date() },
         });
+        job.cancel();
+        break;
       }
     }
   } catch (err: any) {
@@ -99,4 +114,6 @@ export async function generateSegment({seg, index, token, setResults}: GenerateS
       },
     });
   }
+
+  return { quotaError: false };
 }
