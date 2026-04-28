@@ -3,7 +3,6 @@ import { Dispatch, SetStateAction, useRef } from "react";
 
 export interface ComposeVideoProps {
   audioBlob: Blob | null;
-  // audioUrlRef: React.MutableRefObject<string | null>;
   results: SegmentResult[];
   setComposedVideoUrl: Dispatch<SetStateAction<string | null>>;
   setPhase: Dispatch<SetStateAction<"idle" | "generating" | "composing" | "done">>;

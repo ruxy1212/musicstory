@@ -1,6 +1,6 @@
 import { TranscriptionResponse } from "@/types";
 
-export const mergeSegments = (response: TranscriptionResponse, minDuration: number = 4.0) => {
+export const mergeSegments = (response: TranscriptionResponse, minDuration: number = 3.75) => {
   const data = response.segments?.filter(s => s.text?.trim());
   if (!data || data.length < 2) {
     throw new Error("Response does not meet minimum segment requirement.");

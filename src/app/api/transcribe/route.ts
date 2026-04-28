@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const result = await audioTranscribeAI(file, 'gemini', process.env.GEMINI_KEY)
     // const result = await audioTranscribeAI(file, 'groq', process.env.GROQ_KEY)
 
-    const cleanedResponse = mergeSegments(result, 4.8);
+    const cleanedResponse = mergeSegments(result, 3.8);
     return Response.json(cleanedResponse)
   } catch (error: any) {
     return Response.json(

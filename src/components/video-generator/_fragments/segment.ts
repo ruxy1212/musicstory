@@ -82,16 +82,18 @@ export async function generateSegment({seg, index, token, setResults, isRetry = 
       if (msg.type === "data") {
         const [fileData, seed] = (msg as any).data as [
           {
-            url: string;
-            path: string;
-            orig_name: string;
-            mime_type: string;
-            is_stream: boolean;
+            video: {
+              url: string;
+              path: string;
+              orig_name: string;
+              mime_type: string;
+              is_stream: boolean;
+            }
           },
           number
         ];
 
-        const videoUrl = fileData?.url ?? fileData?.path ?? null;
+        const videoUrl = fileData?.video?.url ?? fileData?.video?.path ?? null;
 
         updateResult(index, {
           videoUrl,
