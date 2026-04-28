@@ -1,4 +1,4 @@
-import type { SegmentResult } from "@/types";
+import type { ResultClean, SegmentResult } from "@/types";
 import { Dispatch, SetStateAction } from "react";
 
 export interface ComposeVideoProps {
@@ -6,22 +6,20 @@ export interface ComposeVideoProps {
   results: SegmentResult[];
   setComposedVideoUrl: Dispatch<SetStateAction<string | null>>;
   setPhase: Dispatch<SetStateAction<"idle" | "generating" | "composing" | "done">>;
+  startRender: (results: ResultClean[], audioUrl: string | null, setUrl: (url: string) => void) => void;
 }
 
 // Point to your Render.com server URL.
-// In development, set NEXT_PUBLIC_RENDER_SERVER_URL=http://localhost:3001
-const RENDER_SERVER_URL =
-  process.env.NEXT_PUBLIC_RENDER_SERVER_URL ?? "https://your-app.onrender.com";
+// In development, set NEXT_PUBLIC_RENDER_SERVER_DOMAIN=localhost:3001
 const serverHost = process.env.NEXT_PUBLIC_RENDER_SERVER_DOMAIN?.replace(/^https?:\/\//, '');
-
 
 export async function composeVideo({
   audioBlob,
   results,
   setComposedVideoUrl,
   setPhase,
+  startRender,
 }: ComposeVideoProps) {
-
   let audioDataUrl: string | null = null;
 
   if (audioBlob) {
@@ -35,23 +33,16 @@ export async function composeVideo({
   }));
 
   try {
-    const res = await fetch(`${RENDER_SERVER_URL}/render`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        results: sanitizedResults,
-        audioUrl: audioDataUrl,
-      }),
-    });
+    const resultClean = results.map((res, idx) => ({
+      index: idx,
+      segment: res.segment,
+      videoUrl: res.videoUrl || null,
+      seed: res.seed || Math.floor(Math.random() * 10000),
+      failed: res.failed,
+      duration: res.segment.end - res.segment.start,
+    }));
 
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`Render server error: ${errText}`);
-    }
-
-    const buffer = await res.arrayBuffer();
-    const blob = new Blob([buffer], { type: "video/mp4" });
-    setComposedVideoUrl(URL.createObjectURL(blob));
+    startRender(resultClean, audioDataUrl, setComposedVideoUrl);
     setPhase("done");
   } catch (err) {
     console.error("Render failed:", err);

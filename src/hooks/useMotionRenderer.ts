@@ -1,21 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import type { EnrichedSegment } from '@/types';
-
-interface RenderProgress {
-  stage: 'bundling' | 'composing' | 'rendering' | 'uploading' | 'complete' | 'error' | 'started';
-  progress?: number;
-  message?: string;
-  videoUrl?: string;
-}
-
-interface ResultClean {
-  index: number;
-  segment: EnrichedSegment;
-  videoUrl: string | null;
-  seed: number | null;
-  failed: boolean;
-  duration: number;
-}
+import type { ResultClean, RenderProgress } from '@/types';
 
 export function useRemotionRender(serverHost = 'localhost:3001') {
   const [isRendering, setIsRendering] = useState(false);

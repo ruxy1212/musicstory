@@ -8,6 +8,7 @@ import { composeVideo } from "./_fragments/compose";
 import { stageColor, statusLabel } from "./_fragments/render";
 import Fallback from "./_ui/fallback-video";
 import ComposedVideo from "./_ui/composed-video";
+import { useRemotionRender } from "@/hooks/useMotionRenderer";
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
@@ -15,6 +16,14 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
     useImperativeHandle(ref, () => ({
       runGeneration,
     }));
+
+    const {
+      isRendering,
+      progress,
+      status,
+      error,
+      startRender,
+    } = useRemotionRender();
 
     const segments = enrichedTranscriptions?.segments ?? [];
 
@@ -68,25 +77,15 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
         audioBlob,
         results,
         setComposedVideoUrl,
+        startRender,
         setPhase,
       });
-    }
-
-    // ── Download handler ──────────────────────────────────────────────────────
-
-    function handleDownload() {
-      if (!composedVideoUrl) return;
-      const a = document.createElement("a");
-      a.href = composedVideoUrl;
-      a.download = "composed_video.mp4";
-      a.click();
     }
 
     const completedCount = results.filter((r) => r.status.stage === "complete").length;
     const failedCount = results.filter((r) => r.failed).length;
     const total = segments.length;
 
-    // ─────────────────────────────────────────────────────────────────────────
     return (
       <div
         style={{
@@ -191,11 +190,23 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
           </p>
         )}
 
-        {/* Actions */}
-        <div style={{ display: "flex", gap: 10, marginBottom: "2rem" }}>
-          {phase === "done" && composedVideoUrl && (
+        {/* Final video — no controls download, no download attribute on element */}
+        {phase === "done" && composedVideoUrl && isRendering && (
+          <ComposedVideo
+            composedVideoUrl={composedVideoUrl}
+            isRendering={isRendering}
+            progress={progress}
+            status={status}
+            error={error}
+          />
+        )}
+
+        {/* Fallback: show individual clips when composition failed but generation is done */}
+        {phase === "done" && !composedVideoUrl && (
+          <>
+            <Fallback results={results} />
             <button
-              onClick={handleDownload}
+              onClick={runGeneration}
               style={{
                 padding: "10px 20px",
                 background: "transparent",
@@ -207,35 +218,10 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
                 cursor: "pointer",
               }}
             >
-              Download MP4
+              ReGenerate Video
             </button>
-          )}
-        </div>
-
-        {/* Final video — no controls download, no download attribute on element */}
-        {phase === "done" && composedVideoUrl && (
-          <ComposedVideo composedVideoUrl={composedVideoUrl} />
+          </>
         )}
-
-        {/* Fallback: show individual clips when composition failed but generation is done */}
-        {phase === "done" && !composedVideoUrl && (
-          <Fallback results={results} />
-        )}
-        <button
-          onClick={runGeneration}
-          style={{
-            padding: "10px 20px",
-            background: "transparent",
-            color: "#e8e8e0",
-            border: "0.5px solid #ffffff33",
-            borderRadius: 6,
-            fontFamily: "inherit",
-            fontSize: 13,
-            cursor: "pointer",
-          }}
-        >
-          ReGenerate Video
-        </button>
       </div>
     );
   }

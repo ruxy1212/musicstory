@@ -52,6 +52,15 @@ export interface SegmentResult {
   failed: boolean;
 }
 
+export interface ResultClean {
+  index: number;
+  segment: EnrichedSegment;
+  videoUrl: string | null;
+  seed: number | null;
+  failed: boolean;
+  duration: number;
+}
+
 export interface VideoGeneratorProps {
   enrichedTranscriptions: { text: string; segments: EnrichedSegment[] };
   audioBlob: Blob | null;
@@ -67,3 +76,9 @@ export interface VideoGeneratorHandle {
   runGeneration: () => void;
 }
 
+export interface RenderProgress {
+  stage: 'bundling' | 'composing' | 'rendering' | 'uploading' | 'complete' | 'error' | 'started';
+  progress?: number;
+  message?: string;
+  videoUrl?: string;
+}
