@@ -27,21 +27,14 @@ export default function Page() {
   }
 
   useEffect(() => {
-    const callIt = async () =>{ 
-      if (!videoData?.blob) return;
-      const audioDataUrl = await blobToDataUrl(videoData.blob);
-      console.log({audio: audioDataUrl})
-    }
     if (videoData && videoRef.current) {
-      callIt()
-      
-      // videoRef.current.runGeneration();
+      videoRef.current.runGeneration();
     }
   }, [videoData]);
 
   return (
     <>
-      <AudioTrimmer onGenerate={generateVideo} />
+      {!videoData && <AudioTrimmer onGenerate={generateVideo} />}
       {videoData && (
         <VideoGenerator
           ref={videoRef}

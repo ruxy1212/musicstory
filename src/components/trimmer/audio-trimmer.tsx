@@ -45,7 +45,7 @@ export default function AudioTrimmer({ onGenerate }: AudioTrimmerProps) {
       const transcription = await fetch('/api/transcribe', { method: 'POST', body: form })
       const transcriptionJson = await transcription.json()
       if (!transcriptionJson || !transcriptionJson.text || !transcriptionJson.segments) {
-        //show error
+        //show UI error
         return 
       }
 
@@ -61,7 +61,7 @@ export default function AudioTrimmer({ onGenerate }: AudioTrimmerProps) {
     } catch (error) {
       console.error("Error trimming/uploading audio:", error)
     } finally {
-      setIsProcessing(false)
+      setTimeout(() => setIsProcessing(false), 1500)
     }
   }, [file, region])
 
@@ -129,7 +129,7 @@ export default function AudioTrimmer({ onGenerate }: AudioTrimmerProps) {
               <div className="flex items-center gap-1.5">
                 <ChevronRight size={11} className="text-[var(--primary)]" />
                 <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--text-3)]">
-                  Waveform — select region
+                  Musicstory — select region
                 </span>
               </div>
 
