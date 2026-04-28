@@ -76,7 +76,7 @@ export default function AudioTrimmer({ onGenerate }: AudioTrimmerProps) {
       <div className="scanlines relative z-10 w-full max-w-2xl rounded-2xl border border-[var(--border-hi)] bg-[var(--bg-surface)] shadow-[0_24px_64px_rgba(0,0,0,0.6)]">
 
         {/* Header */}
-        <div className="flex items-center justify-between gap-4 px-7 py-5 border-b border-[var(--border)]">
+        <div className="flex flex-col items-center justify-between gap-4 px-7 py-5 border-b border-[var(--border)] md:flex-row">
           <div className="flex items-center gap-3.5">
             {/* Logo mark */}
             <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[var(--primary-dim)] border border-[var(--primary)] shadow-[0_0_12px_var(--primary-glow)]">
@@ -91,7 +91,7 @@ export default function AudioTrimmer({ onGenerate }: AudioTrimmerProps) {
                 Audio Trimmer
               </h1>
               <p className="text-[11px] text-[var(--text-3)] tracking-wide mt-px">
-                30 second max · drag region to set trim points
+                12 to 30 seconds · drag region to set trim points
               </p>
             </div>
           </div>

@@ -66,22 +66,37 @@ const Waveform = forwardRef<WaveformHandle, WaveformProps>(
         const duration = ws.getDuration()
         onReady(duration)
 
+        const initialEnd = Math.min(30, Math.max(12, duration > 12 ? 12 : duration))
         const region = wsRegions.addRegion({
           start: 0,
-          end: Math.min(30, duration),
+          end: initialEnd,
           drag: true,
           resize: true,
           color: 'rgba(91, 110, 245, 0.3)',
         })
 
         region.on('update-end', () => {
-          if (region.end - region.start > 30) {
-            region.setOptions({ end: region.start + 30 })
+          let newStart = region.start
+          let newEnd = region.end
+          const currentDuration = newEnd - newStart
+          
+          if (currentDuration > 30) {
+            newEnd = newStart + 30
+          } else if (currentDuration < 12 && duration >= 12) {
+            newEnd = newStart + 12
+            if (newEnd > duration) {
+              newEnd = duration
+              newStart = Math.max(0, newEnd - 12)
+            }
           }
-          onRegionChange(region.start, region.end)
+          
+          if (newStart !== region.start || newEnd !== region.end) {
+            region.setOptions({ start: newStart, end: newEnd })
+          }
+          onRegionChange(newStart, newEnd)
         })
 
-        onRegionChange(0, Math.min(30, duration))
+        onRegionChange(0, initialEnd)
         regionRef.current = region
       })
 

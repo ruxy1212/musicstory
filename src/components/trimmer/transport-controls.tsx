@@ -40,7 +40,7 @@ export default function TransportControls({
       <div className="rounded-xl border border-[var(--border-hi)] bg-[var(--bg-elevated)] overflow-hidden">
 
         {/* Four time values */}
-        <div className="grid grid-cols-4 divide-x divide-[var(--border)]">
+        <div className="grid grid-cols-2 divide-x divide-[var(--border)] md:grid-cols-4">
           {[
             { label: 'Position',   value: fmt(currentTime),    color: 'text-[var(--text-1)]' },
             { label: 'Region In',  value: fmt(regionStart),    color: 'text-[var(--primary)]' },
