@@ -17,9 +17,25 @@ export default function Page() {
     setVideoData({ blob: audioBlob, transcriptions });
   }
 
+  function blobToDataUrl(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(new Error("Failed to read blob"));
+      reader.readAsDataURL(blob);
+    });
+  }
+
   useEffect(() => {
+    const callIt = async () =>{ 
+      if (!videoData?.blob) return;
+      const audioDataUrl = await blobToDataUrl(videoData.blob);
+      console.log({audio: audioDataUrl})
+    }
     if (videoData && videoRef.current) {
-      videoRef.current.runGeneration();
+      callIt()
+      
+      // videoRef.current.runGeneration();
     }
   }, [videoData]);
 

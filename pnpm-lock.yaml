@@ -14,13 +14,7 @@ importers:
       '@gradio/client':
         specifier: ^2.2.0
         version: 2.2.0
-      '@remotion/bundler':
-        specifier: ^4.0.452
-        version: 4.0.452(@swc/helpers@0.5.15)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@remotion/player':
-        specifier: ^4.0.452
-        version: 4.0.452(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@remotion/renderer':
         specifier: ^4.0.452
         version: 4.0.452(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       lucide-react:
@@ -3315,7 +3309,7 @@ snapshots:
       react-refresh: 0.18.0
       remotion: 4.0.452(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       source-map: 0.7.3
-      style-loader: 4.0.0(webpack@5.105.0)
+      style-loader: 4.0.0(webpack@5.105.0(esbuild@0.25.0))
       webpack: 5.105.0(esbuild@0.25.0)
     transitivePeerDependencies:
       - '@swc/core'
@@ -5517,7 +5511,7 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  style-loader@4.0.0(webpack@5.105.0):
+  style-loader@4.0.0(webpack@5.105.0(esbuild@0.25.0)):
     dependencies:
       webpack: 5.105.0(esbuild@0.25.0)
 
