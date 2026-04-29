@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import type { ResultClean, RenderProgress } from '@/types';
 
 export function useRemotionRender(serverHost = 'localhost:3001') {
+  const serverToken = process.env.NEXT_PUBLIC_RENDER_API_TOKEN || '';
   const [isRendering, setIsRendering] = useState(false);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<RenderProgress | null>(null);
@@ -27,7 +28,7 @@ export function useRemotionRender(serverHost = 'localhost:3001') {
 
     // Determine protocol (wss for production https, ws for local http)
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const socket = new WebSocket(`${protocol}://${serverHost}`);
+    const socket = new WebSocket(`${protocol}://${serverHost}?token=${serverToken}`);
     socketRef.current = socket;
 
     socket.onopen = () => {
