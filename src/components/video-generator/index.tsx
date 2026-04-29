@@ -7,12 +7,12 @@ import { generateSegment } from "./_fragments/segment";
 import { composeVideo } from "./_fragments/compose";
 import { stageColor, statusLabel } from "./_fragments/render";
 import Fallback from "./_ui/fallback-video";
-import ComposedVideo from "./_ui/composed-video";
+import ComposedVideoPlayer from "./_ui/composed-video-player";
 import { useRemotionRender } from "@/hooks/useMotionRenderer";
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
-  ({ enrichedTranscriptions, audioBlob, token }, ref) => {
+  ({ title, enrichedTranscriptions, audioBlob, token }, ref) => {
     useImperativeHandle(ref, () => ({
       runGeneration,
     }));
@@ -106,99 +106,130 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
           </p>
         </div>
 
-        {/* Segment list */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: "2rem" }}>
-          {results.map((r, i) => (
-            <div
-              key={i}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "28px 1fr auto",
-                alignItems: "center",
-                gap: 12,
-                padding: "10px 14px",
-                background: "#161616",
-                borderRadius: 8,
-                border: `0.5px solid ${r.status.stage === "generating" ? "#f0a50044" : "#ffffff0d"}`,
-                transition: "border-color 0.3s",
-              }}
-            >
-              {/* Index */}
-              <span style={{ fontSize: 11, color: "#444", fontVariantNumeric: "tabular-nums" }}>
-                {String(i + 1).padStart(2, "0")}
-              </span>
-
-              {/* Text + status */}
-              <div>
-                <p style={{ margin: 0, fontSize: 13, color: "#ccc", lineHeight: 1.5 }}>
-                  {r.segment.text}
-                </p>
-                <p style={{ margin: "2px 0 0", fontSize: 11, color: stageColor(r.status.stage) }}>
-                  {statusLabel(r)}
-                </p>
-              </div>
-
-              {/* Stage indicator */}
-              <div
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  background: stageColor(r.status.stage),
-                  flexShrink: 0,
-                  boxShadow:
-                    r.status.stage === "generating"
-                      ? `0 0 6px ${stageColor(r.status.stage)}`
-                      : "none",
-                }}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Progress summary */}
         {phase === "generating" && (
-          <div style={{ marginBottom: "1.5rem" }}>
-            <div
-              style={{
-                height: 2,
-                background: "#1e1e1e",
-                borderRadius: 2,
-                overflow: "hidden",
-                marginBottom: 6,
-              }}
-            >
+          <>
+            {/* Segment list */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: "2rem" }}>
+              {results.map((r, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "28px 1fr auto",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "10px 14px",
+                    background: "#161616",
+                    borderRadius: 8,
+                    border: `0.5px solid ${r.status.stage === "generating" ? "#f0a50044" : "#ffffff0d"}`,
+                    transition: "border-color 0.3s",
+                  }}
+                >
+                  {/* Index */}
+                  <span style={{ fontSize: 11, color: "#444", fontVariantNumeric: "tabular-nums" }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  {/* Text + status */}
+                  <div>
+                    <p style={{ margin: 0, fontSize: 13, color: "#ccc", lineHeight: 1.5 }}>
+                      {r.segment.text}
+                    </p>
+                    <p style={{ margin: "2px 0 0", fontSize: 11, color: stageColor(r.status.stage) }}>
+                      {statusLabel(r)}
+                    </p>
+                  </div>
+
+                  {/* Stage indicator */}
+                  <div
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      background: stageColor(r.status.stage),
+                      flexShrink: 0,
+                      boxShadow:
+                        r.status.stage === "generating"
+                          ? `0 0 6px ${stageColor(r.status.stage)}`
+                          : "none",
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Progress summary */}
+            <div style={{ marginBottom: "1.5rem" }}>
               <div
                 style={{
-                  height: "100%",
-                  width: `${(completedCount / total) * 100}%`,
-                  background: "#f0a500",
-                  transition: "width 0.5s ease",
+                  height: 2,
+                  background: "#1e1e1e",
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  marginBottom: 6,
                 }}
-              />
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${(completedCount / total) * 100}%`,
+                    background: "#f0a500",
+                    transition: "width 0.5s ease",
+                  }}
+                />
+              </div>
+              <p style={{ fontSize: 12, color: "#666", margin: 0 }}>
+                {completedCount} of {total} scenes complete
+                {failedCount > 0 ? ` · ${failedCount} failed` : ""}
+              </p>
             </div>
-            <p style={{ fontSize: 12, color: "#666", margin: 0 }}>
-              {completedCount} of {total} scenes complete
-              {failedCount > 0 ? ` · ${failedCount} failed` : ""}
-            </p>
-          </div>
+          </>
         )}
 
-        {phase === "composing" && (
-          <p style={{ fontSize: 13, color: "#f0a500", marginBottom: "1.5rem" }}>
-            Composing final video…
-          </p>
+        {(phase === "composing" || phase === "done") && !composedVideoUrl && isRendering && (
+          <>
+            <p style={{ fontSize: 13, color: "#f0a500", marginBottom: "1.5rem" }}>
+              Composing final video…
+            </p>
+            {status && (
+              <div>
+                <p>Status: {status.stage}</p>
+                {status.stage === 'rendering' && <progress value={progress} max={100} />}
+                <p>{progress}%</p>
+              </div>
+            )}
+            {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+          </>
         )}
 
         {/* Final video — no controls download, no download attribute on element */}
-        {phase === "done" && composedVideoUrl && isRendering && (
-          <ComposedVideo
-            composedVideoUrl={composedVideoUrl}
-            isRendering={isRendering}
-            progress={progress}
-            status={status}
-            error={error}
-          />
+        {phase === "done" && composedVideoUrl && (
+          <>
+            <ComposedVideoPlayer
+              src={composedVideoUrl}
+              title={title}
+              autoplay={false}
+              controls={true}
+              onPlay={() => console.log('Video playing')}
+              onError={() => console.log('Video error')}
+              className="mb-4"
+            />
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                padding: "10px 20px",
+                background: "transparent",
+                color: "#e8e8e0",
+                border: "0.5px solid #ffffff33",
+                borderRadius: 6,
+                fontFamily: "inherit",
+                fontSize: 13,
+                cursor: "pointer",
+              }}
+            >
+              Create New
+            </button>
+          </>
         )}
 
         {/* Fallback: show individual clips when composition failed but generation is done */}

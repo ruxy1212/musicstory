@@ -9,10 +9,11 @@ import { trimAudio } from '@/utils/trim/trim-audio'
 import { EnrichedTranscription } from '@/types'
 
 interface AudioTrimmerProps {
-  onGenerate: (blob: Blob, transcription: EnrichedTranscription) => void;
+  setTitle: Dispatch<SetStateAction<string>>
+  onGenerate: (blob: Blob, transcription: EnrichedTranscription) => void
 }
 
-export default function AudioTrimmer({ onGenerate }: AudioTrimmerProps) {
+export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps) {
   const waveformRef = useRef<WaveformHandle>(null)
 
   const [file, setFile] = useState<File | null>(null)
@@ -37,6 +38,7 @@ export default function AudioTrimmer({ onGenerate }: AudioTrimmerProps) {
     if (!file) return
     setIsProcessing(true)
     try {
+      setTitle(file.name.replace(/\.[^/.]+$/, ""))
       const wavBlob = await trimAudio(file, region.start, region.end)
       const form = new FormData()
       form.append('file', wavBlob, 'trimmed_audio.wav')

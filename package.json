@@ -19,7 +19,8 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "remotion": "^4.0.452",
-    "wavesurfer.js": "^7.12.6"
+    "wavesurfer.js": "^7.12.6",
+    "xgplayer": "^3.0.22"
   },
   "devDependencies": {
     "@remotion/cli": "^4.0.452",

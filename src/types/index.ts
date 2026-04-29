@@ -62,6 +62,7 @@ export interface ResultClean {
 }
 
 export interface VideoGeneratorProps {
+  title: string;
   enrichedTranscriptions: { text: string; segments: EnrichedSegment[] };
   audioBlob: Blob | null;
   token: `hf_${string}`;

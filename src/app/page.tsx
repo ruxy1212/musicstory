@@ -7,6 +7,7 @@ import VideoGenerator from "@/components/video-generator"
 
 export default function Page() {
   const videoRef = useRef<VideoGeneratorHandle>(null);
+  const [title, setTitle] = useState('no-title');
   const [videoData, setVideoData] = useState<{
     blob: Blob,
     transcriptions: EnrichedTranscription
@@ -34,10 +35,11 @@ export default function Page() {
 
   return (
     <>
-      {!videoData && <AudioTrimmer onGenerate={generateVideo} />}
+      {!videoData && <AudioTrimmer onGenerate={generateVideo} setTitle={setTitle} />}
       {videoData && (
         <VideoGenerator
           ref={videoRef}
+          title={title}
           enrichedTranscriptions={videoData.transcriptions}
           audioBlob={videoData.blob}
           token={(process.env.NEXT_PUBLIC_HF_KEY || '') as `hf_${string}`}

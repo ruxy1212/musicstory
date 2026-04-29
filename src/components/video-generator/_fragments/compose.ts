@@ -26,17 +26,12 @@ export async function composeVideo({
     audioDataUrl = await blobToDataUrl(audioBlob);
   }
 
-  const sanitizedResults = results.map((r) => ({
-    ...r,
-    videoUrl:
-      r.videoUrl && r.videoUrl.startsWith("http") ? r.videoUrl : null,
-  }));
-
   try {
     const resultClean = results.map((res, idx) => ({
+      ...res,
       index: idx,
       segment: res.segment,
-      videoUrl: res.videoUrl || null,
+      videoUrl: res.videoUrl && res.videoUrl.startsWith("http") ? res.videoUrl : null,
       seed: res.seed || Math.floor(Math.random() * 10000),
       failed: res.failed,
       duration: res.segment.end - res.segment.start,
