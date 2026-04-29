@@ -204,3 +204,34 @@ body {
 .animate-shake         { animation: shake 0.35s ease; }
 .animate-spin-smooth   { animation: spin-smooth 0.8s linear infinite; }
 .animate-pulse-dot     { animation: pulse-dot 1.2s ease infinite; }
+
+/* ─── Extra Landing Page Utilities ───────────────────────────────────────── */
+
+.glass-card {
+  background: color-mix(in srgb, var(--bg-surface), transparent 30%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-bright);
+}
+
+.neon-glow {
+  box-shadow: 
+    0 0 20px color-mix(in srgb, var(--primary), transparent 70%),
+    0 0 40px color-mix(in srgb, var(--accent), transparent 90%);
+}
+
+.text-gradient {
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Spacing Aliases to match sample */
+:root {
+  --stack-xs: 4px;
+  --stack-sm: 8px;
+  --stack-md: 16px;
+  --stack-lg: 32px;
+  --stack-xl: 64px;
+  --container-max: 1440px;
+}
