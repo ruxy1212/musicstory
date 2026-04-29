@@ -7,6 +7,7 @@ import TransportControls from '@/components/trimmer/transport-controls'
 import { ChevronRight, X } from 'lucide-react'
 import { trimAudio } from '@/utils/trim/trim-audio'
 import { EnrichedTranscription } from '@/types'
+import Logo from '@/components/common/logo'
 
 interface AudioTrimmerProps {
   setTitle: Dispatch<SetStateAction<string>>
@@ -81,13 +82,7 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
         <div className="flex flex-col items-center justify-between gap-4 px-7 py-5 border-b border-[var(--border)] md:flex-row">
           <div className="flex items-center gap-3.5">
             {/* Logo mark */}
-            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[var(--primary-dim)] border border-[var(--primary)] shadow-[0_0_12px_var(--primary-glow)]">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-[var(--primary)]">
-                <path d="M9 18V5l12-2v13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="6" cy="18" r="3" stroke="currentColor" strokeWidth="1.5"/>
-                <circle cx="18" cy="16" r="3" stroke="currentColor" strokeWidth="1.5"/>
-              </svg>
-            </div>
+            <Logo />
             <div>
               <h1 className="font-['Syne'] text-[17px] font-bold text-[var(--text-1)] leading-tight tracking-tight">
                 Audio Trimmer
@@ -113,7 +108,7 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
               <button
                 onClick={() => { setFile(null); setIsReady(false) }}
                 aria-label="Remove file"
-                className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full text-[var(--text-3)] hover:text-[var(--error)] hover:bg-[var(--bg-overlay)] transition-colors duration-150"
+                className="cursor-pointer flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full text-[var(--text-3)] hover:text-[var(--error)] hover:bg-[var(--bg-overlay)] transition-colors duration-150"
               >
                 <X size={11} />
               </button>
@@ -131,7 +126,7 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
               <div className="flex items-center gap-1.5">
                 <ChevronRight size={11} className="text-[var(--primary)]" />
                 <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--text-3)]">
-                  Musicstory — select region
+                  Select region to trim
                 </span>
               </div>
 

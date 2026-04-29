@@ -9,6 +9,7 @@ import { stageColor, statusLabel } from "./_fragments/render";
 import Fallback from "./_ui/fallback-video";
 import ComposedVideoPlayer from "./_ui/composed-video-player";
 import { useRemotionRender } from "@/hooks/useMotionRenderer";
+import Logo from "@/components/common/logo";
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
@@ -98,13 +99,7 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
           <div className="flex flex-col items-center justify-between gap-4 px-7 py-5 border-b border-[var(--border)] md:flex-row">
             <div className="flex items-center gap-3.5">
               {/* Logo mark */}
-              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[var(--primary-dim)] border border-[var(--primary)] shadow-[0_0_12px_var(--primary-glow)]">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-[var(--primary)]">
-                  <path d="M9 18V5l12-2v13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  <circle cx="6" cy="18" r="3" stroke="currentColor" strokeWidth="1.5" />
-                  <circle cx="18" cy="16" r="3" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-              </div>
+              <Logo />
               <div>
                 <h1 className="font-['Syne'] text-[17px] font-bold text-[var(--text-1)] leading-tight tracking-tight">
                   Video Composer
