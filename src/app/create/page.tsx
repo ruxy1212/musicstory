@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import { EnrichedTranscription, VideoGeneratorHandle } from '@/types'
 import VideoGenerator from "@/components/video-generator"
 import { useKeys } from "@/components/config/keys-context"
+import Header from "@/components/common/header"
 
 export default function Page() {
   const { videoGenKey: hf_key } = useKeys();
@@ -29,6 +30,7 @@ export default function Page() {
 
   return (
     <>
+      <Header location="Create" />
       {!videoData && <AudioTrimmer onGenerate={generateVideo} setTitle={setTitle} />}
       {videoData && (
         <VideoGenerator
