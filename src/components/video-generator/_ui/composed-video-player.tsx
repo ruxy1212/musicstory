@@ -174,39 +174,19 @@ const ComposedVideoPlayer: React.FC<ComposedVideoPlayerProps> = ({
     onError,
   ]);
 
-  function handleDownload() {
-    if (!src) return;
-    const a = document.createElement("a");
-    a.href = src;
-    a.download = "composed_video.mp4";
-    a.click();
-  }
-
   if (playerState.error) {
     return (
-      <div className={`mx-auto w-full max-w-4xl ${className}`}>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-red-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
+      <div className={`w-full max-w-4xl mx-auto ${className}`}>
+        <div className="rounded-xl border border-[var(--error)] bg-[var(--bg-elevated)] p-6 shadow-[0_0_24px_rgba(239,68,68,0.1)]">
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--error)] bg-opacity-10 flex items-center justify-center">
+              <svg className="h-6 w-6 text-[var(--error)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
-                Video Error
-              </h3>
-              <p className="mt-1 text-sm text-red-700">
-                {playerState.error}
-              </p>
+            <div>
+              <h3 className="text-sm font-bold text-[var(--text-1)] font-['Syne']">Video Initialization Error</h3>
+              <p className="mt-1 text-xs text-[var(--text-3)] font-mono">{playerState.error}</p>
             </div>
           </div>
         </div>
@@ -215,49 +195,28 @@ const ComposedVideoPlayer: React.FC<ComposedVideoPlayerProps> = ({
   }
 
   return (
-    <div className={`mx-auto w-full max-w-4xl ${className}`}>
-      <div className="relative w-full">
-        <div className="relative w-full">
-          {playerState.isLoading && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-gray-100">
-              <div className="text-center">
-                <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
-                <p className="mt-4 text-gray-600">
-                  Loading video...
-                </p>
+    <div className={`w-full max-w-4xl mx-auto ${className}`}>
+      <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-[var(--border-hi)] bg-black shadow-[0_24px_64px_rgba(0,0,0,0.4)] group">
+        {playerState.isLoading && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-[var(--bg-surface)]">
+            <div className="text-center flex flex-col items-center gap-4">
+              <div className="relative">
+                <div className="w-12 h-12 rounded-full border-2 border-[var(--border)] border-t-[var(--primary)] animate-spin-smooth" />
+                <div className="absolute inset-0 rounded-full border-2 border-[var(--primary-glow)] blur-sm animate-pulse-dot" />
               </div>
+              <p className="text-[11px] text-[var(--text-3)] font-mono uppercase tracking-[0.2em] animate-pulse">
+                Initializing Stream...
+              </p>
             </div>
-          )}
-
-          {/* XGPlayer container */}
-          <div
-            ref={containerRef}
-            id={src}
-            className="absolute inset-0 h-full w-full overflow-hidden rounded-lg"
-            style={{
-              backgroundColor: '#000',
-              aspectRatio: '16/9',
-            }}
-          />
-
-          <div style={{ display: "flex", gap: 10, marginBottom: "2rem" }}>
-            <button
-              onClick={handleDownload}
-              style={{
-                padding: "10px 20px",
-                background: "transparent",
-                color: "#e8e8e0",
-                border: "0.5px solid #ffffff33",
-                borderRadius: 6,
-                fontFamily: "inherit",
-                fontSize: 13,
-                cursor: "pointer",
-              }}
-            >
-              Download MP4
-            </button>
           </div>
-        </div>
+        )}
+
+        {/* XGPlayer container */}
+        <div
+          ref={containerRef}
+          id={src}
+          className="w-full h-full"
+        />
       </div>
     </div>
   );

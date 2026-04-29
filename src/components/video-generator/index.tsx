@@ -87,172 +87,230 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
     const total = segments.length;
 
     return (
-      <div
-        style={{
-          fontFamily: "'DM Mono', monospace",
-          background: "#0c0c0c",
-          color: "#e8e8e0",
-          minHeight: "100vh",
-          padding: "2rem",
-        }}
-      >
-        {/* Header */}
-        <div style={{ marginBottom: "2rem" }}>
-          <h1 style={{ fontSize: 22, fontWeight: 500, letterSpacing: "-0.02em", margin: 0 }}>
-            Video Composer
-          </h1>
-          <p style={{ color: "#666", fontSize: 13, marginTop: 4 }}>
-            {total} scene{total !== 1 ? "s" : ""} · {audioBlob ? "Audio attached" : "No audio"}
-          </p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center p-8 bg-[var(--bg-base)]">
+        {/* Ambient blobs */}
+        <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-[var(--primary-glow)] blur-[120px] opacity-30 pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+        <div className="fixed bottom-0 right-0 w-[380px] h-[380px] rounded-full bg-[var(--accent-glow)] blur-[100px] opacity-20 pointer-events-none translate-x-1/3 translate-y-1/3" />
 
-        {phase === "generating" && (
-          <>
-            {/* Segment list */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: "2rem" }}>
-              {results.map((r, i) => (
-                <div
-                  key={i}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "28px 1fr auto",
-                    alignItems: "center",
-                    gap: 12,
-                    padding: "10px 14px",
-                    background: "#161616",
-                    borderRadius: 8,
-                    border: `0.5px solid ${r.status.stage === "generating" ? "#f0a50044" : "#ffffff0d"}`,
-                    transition: "border-color 0.3s",
-                  }}
-                >
-                  {/* Index */}
-                  <span style={{ fontSize: 11, color: "#444", fontVariantNumeric: "tabular-nums" }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-
-                  {/* Text + status */}
-                  <div>
-                    <p style={{ margin: 0, fontSize: 13, color: "#ccc", lineHeight: 1.5 }}>
-                      {r.segment.text}
-                    </p>
-                    <p style={{ margin: "2px 0 0", fontSize: 11, color: stageColor(r.status.stage) }}>
-                      {statusLabel(r)}
-                    </p>
-                  </div>
-
-                  {/* Stage indicator */}
-                  <div
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      background: stageColor(r.status.stage),
-                      flexShrink: 0,
-                      boxShadow:
-                        r.status.stage === "generating"
-                          ? `0 0 6px ${stageColor(r.status.stage)}`
-                          : "none",
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* Progress summary */}
-            <div style={{ marginBottom: "1.5rem" }}>
-              <div
-                style={{
-                  height: 2,
-                  background: "#1e1e1e",
-                  borderRadius: 2,
-                  overflow: "hidden",
-                  marginBottom: 6,
-                }}
-              >
-                <div
-                  style={{
-                    height: "100%",
-                    width: `${(completedCount / total) * 100}%`,
-                    background: "#f0a500",
-                    transition: "width 0.5s ease",
-                  }}
-                />
+        {/* Card */}
+        <div className="scanlines relative z-10 w-full max-w-5xl rounded-2xl border border-[var(--border-hi)] bg-[var(--bg-surface)] shadow-[0_24px_64px_rgba(0,0,0,0.6)]">
+          {/* Header */}
+          <div className="flex flex-col items-center justify-between gap-4 px-7 py-5 border-b border-[var(--border)] md:flex-row">
+            <div className="flex items-center gap-3.5">
+              {/* Logo mark */}
+              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[var(--primary-dim)] border border-[var(--primary)] shadow-[0_0_12px_var(--primary-glow)]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-[var(--primary)]">
+                  <path d="M9 18V5l12-2v13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="6" cy="18" r="3" stroke="currentColor" strokeWidth="1.5" />
+                  <circle cx="18" cy="16" r="3" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
               </div>
-              <p style={{ fontSize: 12, color: "#666", margin: 0 }}>
-                {completedCount} of {total} scenes complete
-                {failedCount > 0 ? ` · ${failedCount} failed` : ""}
-              </p>
-            </div>
-          </>
-        )}
-
-        {(phase === "composing" || phase === "done") && !composedVideoUrl && isRendering && (
-          <>
-            <p style={{ fontSize: 13, color: "#f0a500", marginBottom: "1.5rem" }}>
-              Composing final video…
-            </p>
-            {status && (
               <div>
-                <p>Status: {status.stage}</p>
-                {status.stage === 'rendering' && <progress value={progress} max={100} />}
-                <p>{progress}%</p>
+                <h1 className="font-['Syne'] text-[17px] font-bold text-[var(--text-1)] leading-tight tracking-tight">
+                  Video Composer
+                </h1>
+                <p className="text-[11px] text-[var(--text-3)] tracking-wide mt-px">
+                  {total} scene{total !== 1 ? "s" : ""} · {audioBlob ? "Audio attached" : "No audio"}
+                </p>
+              </div>
+            </div>
+
+            {/* Status badge */}
+            <div className="flex items-center gap-2 pl-2.5 pr-1.5 py-1.5 rounded-full border border-[var(--border-hi)] bg-[var(--bg-elevated)]">
+              <span className={[
+                'w-1.5 h-1.5 rounded-full flex-shrink-0',
+                phase === 'done' ? 'bg-[var(--success)] shadow-[0_0_6px_var(--success)]' : 'bg-[var(--primary)] animate-pulse-dot',
+              ].join(' ')} />
+              <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-2)] px-1">
+                {phase}
+              </span>
+            </div>
+          </div>
+
+          {/* Body */}
+          <div className="p-7">
+            {phase === "generating" && (
+              <div className="animate-fade-up">
+                {/* Segment list */}
+                <div className="flex flex-col gap-2 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  {results.map((r, i) => (
+                    <div
+                      key={i}
+                      className="grid grid-cols-[32px_1fr_12px] items-center gap-4 p-4 rounded-xl border transition-all duration-300"
+                      style={{
+                        background: "var(--bg-elevated)",
+                        borderColor: r.status.stage === "generating" ? "var(--primary-glow)" : "var(--border)",
+                        boxShadow: r.status.stage === "generating" ? "0 0 20px var(--primary-dim)" : "none"
+                      }}
+                    >
+                      <span className="font-mono text-[11px] text-[var(--text-muted)] tabular-nums">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+
+                      <div>
+                        <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed mb-1">
+                          {r.segment.text}
+                        </p>
+                        <p 
+                          className="font-mono text-[10px] uppercase tracking-wider"
+                          style={{ color: stageColor(r.status.stage) }}
+                        >
+                          {statusLabel(r)}
+                        </p>
+                      </div>
+
+                      <div
+                        className="w-2 h-2 rounded-full"
+                        style={{
+                          background: stageColor(r.status.stage),
+                          boxShadow: r.status.stage === "generating" ? `0 0 10px ${stageColor(r.status.stage)}` : "none",
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Progress summary */}
+                <div className="p-6 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] relative overflow-hidden">
+                  <div className="flex justify-between items-end mb-3">
+                    <div>
+                      <h4 className="text-[var(--text-1)] font-['Syne'] font-bold text-sm">Processing Pipeline</h4>
+                      <p className="text-[11px] text-[var(--text-3)] font-mono mt-1">
+                        {completedCount} of {total} scenes complete {failedCount > 0 && `(${failedCount} failed)`}
+                      </p>
+                    </div>
+                    <span className="text-[var(--primary)] font-mono text-lg font-bold">
+                      {Math.round((completedCount / total) * 100)}%
+                    </span>
+                  </div>
+                  
+                  <div className="h-1.5 w-full bg-[var(--bg-surface)] rounded-full overflow-hidden border border-[var(--border)]">
+                    <div
+                      className="h-full bg-[var(--primary)] transition-all duration-700 ease-out"
+                      style={{ width: `${(completedCount / total) * 100}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             )}
-            {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-          </>
-        )}
 
-        {/* Final video — no controls download, no download attribute on element */}
-        {phase === "done" && composedVideoUrl && (
-          <>
-            <ComposedVideoPlayer
-              src={composedVideoUrl}
-              title={title}
-              autoplay={false}
-              controls={true}
-              onPlay={() => console.log('Video playing')}
-              onError={() => console.log('Video error')}
-              className="mb-4"
-            />
-            <button
-              onClick={() => window.location.reload()}
-              style={{
-                padding: "10px 20px",
-                background: "transparent",
-                color: "#e8e8e0",
-                border: "0.5px solid #ffffff33",
-                borderRadius: 6,
-                fontFamily: "inherit",
-                fontSize: 13,
-                cursor: "pointer",
-              }}
-            >
-              Create New
-            </button>
-          </>
-        )}
+            {(phase === "composing" || (phase === "done" && !composedVideoUrl && isRendering)) && (
+              <div className="flex flex-col items-center justify-center py-12 gap-8 animate-fade-up">
+                <div className="relative w-24 h-24">
+                  <div className="absolute inset-0 rounded-full border-4 border-[var(--border)]" />
+                  <div 
+                    className="absolute inset-0 rounded-full border-4 border-[var(--primary)] border-t-transparent animate-spin-smooth"
+                    style={{ borderRightColor: 'transparent' }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-[var(--primary)] font-mono text-xl font-bold">
+                      {Math.round(progress)}%
+                    </span>
+                  </div>
+                </div>
 
-        {/* Fallback: show individual clips when composition failed but generation is done */}
-        {phase === "done" && !composedVideoUrl && (
-          <>
-            <Fallback results={results} />
-            <button
-              onClick={runGeneration}
-              style={{
-                padding: "10px 20px",
-                background: "transparent",
-                color: "#e8e8e0",
-                border: "0.5px solid #ffffff33",
-                borderRadius: 6,
-                fontFamily: "inherit",
-                fontSize: 13,
-                cursor: "pointer",
-              }}
-            >
-              ReGenerate Video
-            </button>
-          </>
-        )}
+                <div className="text-center space-y-2">
+                  <h3 className="text-xl font-['Syne'] font-bold text-[var(--text-1)] tracking-tight">
+                    Composing Cinematic Masterpiece
+                  </h3>
+                  <p className="text-sm text-[var(--text-3)] font-mono uppercase tracking-[0.2em]">
+                    Phase: {status?.stage ?? 'Preparing...'}
+                  </p>
+                </div>
+
+                <div className="w-full max-w-md space-y-2">
+                   <div className="h-1.5 w-full bg-[var(--bg-elevated)] rounded-full overflow-hidden border border-[var(--border)]">
+                    <div 
+                      className="h-full bg-[var(--primary)] transition-all duration-300" 
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  {error && (
+                    <div className="p-4 rounded-lg bg-[var(--error)] bg-opacity-10 border border-[var(--error)] border-opacity-20 text-[var(--error)] text-xs font-mono text-center">
+                      Error: {error}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {phase === "done" && composedVideoUrl && (
+              <div className="flex flex-col gap-8 animate-fade-up">
+                <ComposedVideoPlayer
+                  src={composedVideoUrl}
+                  title={title}
+                  autoplay={false}
+                  controls={true}
+                  className="rounded-2xl shadow-2xl"
+                />
+                
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                  <button
+                    onClick={() => {
+                      const a = document.createElement("a");
+                      a.href = composedVideoUrl;
+                      a.download = `${title || 'video'}.mp4`;
+                      a.click();
+                    }}
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[var(--primary)] text-white font-['Syne'] font-bold text-sm hover:bg-[var(--primary-hover)] transition-all shadow-[0_8px_24px_var(--primary-glow)] flex items-center justify-center gap-2"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download Video
+                  </button>
+                  
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-[var(--border-hi)] bg-[var(--bg-elevated)] text-[var(--text-1)] font-['Syne'] font-bold text-sm hover:bg-[var(--bg-overlay)] transition-all flex items-center justify-center gap-2"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                    Create New
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {phase === "done" && !composedVideoUrl && !isRendering && (
+              <div className="flex flex-col gap-8 animate-fade-up">
+                <div className="p-6 rounded-2xl bg-[var(--error)] bg-opacity-5 border border-[var(--error)] border-opacity-20 flex items-center gap-4">
+                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--error)] flex items-center justify-center text-white">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                      </svg>
+                   </div>
+                   <div>
+                     <h3 className="text-[var(--text-1)] font-bold font-['Syne']">Composition Failed</h3>
+                     <p className="text-[var(--text-3)] text-xs font-mono">Individual scenes were generated successfully, but stitching them together failed. You can still view the scenes below.</p>
+                   </div>
+                </div>
+
+                <Fallback results={results} />
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 border-t border-[var(--border)]">
+                  <button
+                    onClick={runGeneration}
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[var(--primary)] text-white font-['Syne'] font-bold text-sm hover:bg-[var(--primary-hover)] transition-all shadow-[0_8px_24px_var(--primary-glow)] flex items-center justify-center gap-2"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                    </svg>
+                    Regenerate Video
+                  </button>
+
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-[var(--border-hi)] bg-[var(--bg-elevated)] text-[var(--text-1)] font-['Syne'] font-bold text-sm hover:bg-[var(--bg-overlay)] transition-all flex items-center justify-center gap-2"
+                  >
+                    Create New
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     );
   }

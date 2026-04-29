@@ -20,10 +20,10 @@ export function statusLabel(r: SegmentResult): string {
 export function stageColor(stage: SegmentStatus["stage"]): string {
   return (
     {
-      pending: "#555",
-      generating: "#f0a500",
-      complete: "#22c55e",
-      error: "#ef4444",
-    }[stage] ?? "#555"
+      pending: "var(--text-muted)",
+      generating: "var(--primary)",
+      complete: "var(--success)",
+      error: "var(--error)",
+    }[stage] ?? "var(--text-muted)"
   );
 }
