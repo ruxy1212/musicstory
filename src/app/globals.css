@@ -226,6 +226,10 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+button {
+  cursor: pointer;
+}
+
 /* Spacing Aliases to match sample */
 :root {
   --stack-xs: 4px;

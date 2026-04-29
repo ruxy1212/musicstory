@@ -2,6 +2,7 @@
 
 import { type ReactNode } from 'react';
 import { ProgressProvider } from '@bprogress/next/app';
+import { KeysProvider } from '@/components/config/keys-context';
 
 interface ProviderProps {
   children: ReactNode;
@@ -15,7 +16,9 @@ export function Providers({ children }: ProviderProps) {
       options={{ showSpinner: false }}
       shallowRouting
     >
-      {children}
+      <KeysProvider>
+        {children}
+      </KeysProvider>
     </ProgressProvider>
   )
 }

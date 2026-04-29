@@ -1,8 +1,15 @@
 import { TranscriptionResponse } from "@/types";
 import { providerClient, providers } from "@/lib/providers";
+import { useKeys } from "@/components/config/keys-context";
 
-export const enrichSegments = async (transcriptions: TranscriptionResponse, provider: keyof typeof providers,
-  apiKey?: string) => {
+export const enrichSegments = async (transcriptions: TranscriptionResponse) => {
+  const { textAudioKey, audioProvider } = useKeys();
+  const apiKey = textAudioKey as string;
+  const provider = audioProvider as keyof typeof providers;
+  if (!apiKey || !provider) {
+    throw new Error("Please configure your API keys: Get Gemini key free from https://aistudio.google.com/api-keys.");
+  }
+
   const validSegments = transcriptions.segments?.filter(s => s.text?.trim());
   if (!validSegments || validSegments.length < 2) {
     throw new Error("Response does not meet minimum segment requirement.");

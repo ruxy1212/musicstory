@@ -11,8 +11,7 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Invalid transcription structure' }, { status: 400 })
     }
 
-    const result = await enrichSegments(transcription, 'gemini', process.env.GEMINI_KEY)
-    // const result = await enrichSegments(transcription, 'groq', process.env.GROQ_KEY)
+    const result = await enrichSegments(transcription)
 
     return Response.json(result)
   } catch (error: any) {

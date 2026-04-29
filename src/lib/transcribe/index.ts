@@ -1,6 +1,7 @@
 import { TranscriptionResponse, TranscriptionSegment } from "@/types";
 import OpenAI, { toFile } from "openai";
 import { providerClient, providers } from "@/lib/providers";
+import { useKeys } from "@/components/config/keys-context";
 
 // Providers that return verbose_json with segments
 const transcriptionViaAPI = async (
@@ -81,11 +82,14 @@ Each segment should cover roughly 3 seconds of audio.`,
   }
 };
 
-export const audioTranscribeAI = async (
-  audio: File | Blob,
-  provider: keyof typeof providers,
-  apiKey?: string
-): Promise<TranscriptionResponse> => {
+export const audioTranscribeAI = async (audio: File | Blob): Promise<TranscriptionResponse> => {
+  const { textAudioKey, audioProvider } = useKeys();
+  const apiKey = textAudioKey as string;
+  const provider = audioProvider as keyof typeof providers;
+  if (!apiKey || !provider) {
+    throw new Error("Please configure your API keys: Get Gemini key free from https://aistudio.google.com/api-keys.");
+  }
+
   const config = providers[provider];
   const client = providerClient(provider, apiKey);
 

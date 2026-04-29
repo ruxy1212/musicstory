@@ -2,20 +2,30 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { 
-  Bell, 
+import {
   Sparkles, 
   Film, 
   Share2, 
   Home, 
   Compass, 
-  PlusCircle, 
-  User,
-  ArrowRight
+  PlusCircle,
+  ArrowRight,
+  Settings,
 } from "lucide-react";
 import Logo from "@/components/common/logo";
+import ConfigModal from "@/components/config/config-modal";
+import { useEffect, useState } from "react";
 
 export default function LandingPage() {
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+
+  useEffect(() => {
+    if (isConfigOpen) document.body.style.overflow = 'hidden'
+    else document.body.style.overflow = ''
+
+    return () => { document.body.style.overflow = ''; };
+  }, [isConfigOpen]);
+
   return (
     <div className="bg-[var(--bg-base)] text-[var(--text-primary)] min-h-screen font-sans selection:bg-[var(--primary-glow)]">
       {/* Main Canvas */}
@@ -23,9 +33,9 @@ export default function LandingPage() {
         
         {/* Shared Component: TopAppBar */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-[#0D0B1F]/80 backdrop-blur-2xl border-b border-white/5 shadow-[0_0_15px_rgba(99,102,241,0.2)] flex justify-between items-center w-full px-6 py-4">
-          <div className="flex items-center gap-[var(--stack-md)]">
+          <div className="flex items-center gap-2">
             <Logo />
-            <span className="text-2xl font-display italic bg-gradient-to-r from-indigo-500 to-cyan-400 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold font-display italic bg-gradient-to-r from-indigo-500 to-cyan-400 bg-clip-text text-transparent">
               MusicStory
             </span>
           </div>
@@ -33,18 +43,15 @@ export default function LandingPage() {
             <nav className="hidden md:flex gap-[var(--stack-md)] font-medium">
               <Link href="/" className="text-cyan-400 hover:text-cyan-300 transition-colors">Home</Link>
               <Link href="#" className="text-white/60 hover:text-cyan-300 transition-colors">Discover</Link>
-              <Link href="/create" className="text-white/60 hover:text-cyan-300 transition-colors">Studio</Link>
+              <Link href="/create" className="text-white/60 hover:text-cyan-300 transition-colors">Create</Link>
             </nav>
             <div className="flex items-center gap-[var(--stack-sm)]">
-              <Bell className="w-5 h-5 text-white/60 hover:text-cyan-300 cursor-pointer transition-colors" />
-              <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10">
-                <Image 
-                  alt="User profile" 
-                  width={40} 
-                  height={40} 
-                  src="/preview.png"
-                />
-              </div>
+              <button 
+                onClick={() => setIsConfigOpen(true)}
+                className="w-10 h-10 flex justify-center items-center rounded-full overflow-hidden border border-white/10 hover:bg-white/5 transition-colors"
+              >
+                <Settings className="w-6 h-6 text-white/60 hover:text-cyan-300 transition-colors" />
+              </button>
             </div>
           </div>
         </header>
@@ -70,7 +77,7 @@ export default function LandingPage() {
                <Image src="/logo.png" alt="MusicStory Logo" height={180} width={180} />
             </div>
             
-            <h1 className="font-display text-4xl md:text-6xl text-[var(--text-primary)] tracking-tight">
+            <h1 className="font-display text-3xl md:text-6xl text-[var(--text-primary)] tracking-tight">
               <span className="italic text-gradient">Every Song has a</span>
               <br />
               <span className="text-gradient">Visual Journey.</span>
@@ -92,20 +99,8 @@ export default function LandingPage() {
 
             {/* Meta info */}
             <div className="flex items-center gap-[var(--stack-lg)] pt-[var(--stack-lg)] border-t border-white/5 w-full justify-center">
-              <div className="flex -space-x-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0D0B1F] overflow-hidden">
-                    <Image 
-                      alt="User" 
-                      width={32} 
-                      height={32} 
-                      src={`/preview.png`}
-                    />
-                  </div>
-                ))}
-              </div>
               <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--text-secondary)]">
-                +12k Creators generating visuals today
+                <span>12,000,008</span> visuals created
               </span>
             </div>
           </div>
@@ -152,16 +147,19 @@ export default function LandingPage() {
             <PlusCircle className="w-6 h-6" />
             <span className="text-[10px] uppercase tracking-widest font-bold">Create</span>
           </Link>
-          <div className="flex flex-col items-center justify-center text-white/40 p-2 hover:bg-white/5 rounded-2xl transition-all">
-            <Film className="w-6 h-6" />
-            <span className="text-[10px] uppercase tracking-widest font-bold">Studio</span>
-          </div>
-          <div className="flex flex-col items-center justify-center text-white/40 p-2 hover:bg-white/5 rounded-2xl transition-all">
-            <User className="w-6 h-6" />
-            <span className="text-[10px] uppercase tracking-widest font-bold">Profile</span>
-          </div>
+          <button 
+            onClick={() => setIsConfigOpen(true)}
+            className="flex flex-col items-center justify-center text-white/40 p-2 hover:bg-white/5 rounded-2xl transition-all"
+          >
+            <Settings className="w-6 h-6" />
+            <span className="text-[10px] uppercase tracking-widest font-bold">Config</span>
+          </button>
         </nav>
 
+        <ConfigModal 
+          isOpen={isConfigOpen} 
+          onClose={() => setIsConfigOpen(false)} 
+        />
       </main>
     </div>
   );

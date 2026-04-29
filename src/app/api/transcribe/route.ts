@@ -12,8 +12,7 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Invalid file' }, { status: 400 })
     }
 
-    const result = await audioTranscribeAI(file, 'gemini', process.env.GEMINI_KEY)
-    // const result = await audioTranscribeAI(file, 'groq', process.env.GROQ_KEY)
+    const result = await audioTranscribeAI(file)
 
     const cleanedResponse = mergeSegments(result, 3.8);
     return Response.json(cleanedResponse)

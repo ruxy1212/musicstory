@@ -4,8 +4,11 @@ import AudioTrimmer from "@/components/trimmer/audio-trimmer"
 import { useEffect, useRef, useState } from "react"
 import { EnrichedTranscription, VideoGeneratorHandle } from '@/types'
 import VideoGenerator from "@/components/video-generator"
+import { useKeys } from "@/components/config/keys-context"
 
 export default function Page() {
+  const { videoGenKey: hf_key } = useKeys();
+
   const videoRef = useRef<VideoGeneratorHandle>(null);
   const [title, setTitle] = useState('no-title');
   const [videoData, setVideoData] = useState<{
@@ -16,15 +19,6 @@ export default function Page() {
   const generateVideo = (audioBlob: Blob, transcriptions: EnrichedTranscription) => {
     if (!audioBlob || !transcriptions) return
     setVideoData({ blob: audioBlob, transcriptions });
-  }
-
-  function blobToDataUrl(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = () => reject(new Error("Failed to read blob"));
-      reader.readAsDataURL(blob);
-    });
   }
 
   useEffect(() => {
@@ -42,7 +36,7 @@ export default function Page() {
           title={title}
           enrichedTranscriptions={videoData.transcriptions}
           audioBlob={videoData.blob}
-          token={(process.env.NEXT_PUBLIC_HF_KEY || '') as `hf_${string}`}
+          token={(hf_key || '') as `hf_${string}`}
         />
       )}
     </>
