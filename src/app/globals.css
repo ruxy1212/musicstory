@@ -208,10 +208,18 @@ body {
 /* ─── Extra Landing Page Utilities ───────────────────────────────────────── */
 
 .glass-card {
+  user-select: none;
   background: color-mix(in srgb, var(--bg-surface), transparent 30%);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-bright);
+}
+
+.glass-card:hover {
+  background: oklch(51.017% 0.26191 276.948 / 0.2);
+  border-color: var(--cyan-400);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 .neon-glow {

@@ -84,11 +84,12 @@ export default function LandingPage() {
             <p className="text-sm text-[var(--text-secondary)]">High-fidelity 4K output with professional color grading based on the mood of your track.</p>
           </div>
 
-          <div className="glass-card rounded-2xl p-[var(--stack-md)] flex flex-col gap-[var(--stack-sm)] hover:border-indigo-500/40 transition-colors group">
+          <div className="relative glass-card rounded-2xl p-[var(--stack-md)] flex flex-col gap-[var(--stack-sm)] hover:border-indigo-500/40 transition-colors group">
             <div className="w-12 h-12 rounded-lg bg-indigo-600/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
               <Share2 className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold text-[var(--text-primary)]">Instant Export</h3>
+            <span className="absolute bg-indigo-600/20 right-4 top-4 px-1.5 py-1 rounded-2xl text-xs">Coming Soon</span>
             <p className="text-sm text-[var(--text-secondary)]">Formatted specifically for social platforms like TikTok, Instagram, and YouTube Shorts.</p>
           </div>
         </section>

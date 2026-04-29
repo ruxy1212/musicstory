@@ -31,6 +31,7 @@ export default function Header({ location }: { location?: string }) {
              {link: '/create', label: 'Create', Icon: PlusCircle }
             ].map((item, i) => (
             <Link 
+              key={i}
               href={item.link} 
               className={`
                 flex items-center gap-1 px-3 py-1 rounded-lg border-2 transition-all duration-200
