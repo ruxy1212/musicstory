@@ -1,13 +1,13 @@
 import { TranscriptionResponse } from "@/types";
 import { providerClient, providers } from "@/lib/providers";
-import { useKeys } from "@/components/config/keys-context";
 
-export const enrichSegments = async (transcriptions: TranscriptionResponse) => {
-  const { textAudioKey, audioProvider } = useKeys();
-  const apiKey = textAudioKey as string;
-  const provider = audioProvider as keyof typeof providers;
+export const enrichSegments = async (
+  transcriptions: TranscriptionResponse,
+  apiKey: string,
+  provider: keyof typeof providers
+) => {
   if (!apiKey || !provider) {
-    throw new Error("Please configure your API keys: Get Gemini key free from https://aistudio.google.com/api-keys.");
+    throw new Error("Missing API Key or Provider");
   }
 
   const validSegments = transcriptions.segments?.filter(s => s.text?.trim());

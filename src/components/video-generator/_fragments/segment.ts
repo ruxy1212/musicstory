@@ -2,6 +2,7 @@ import { Client } from "@gradio/client";
 import { EnrichedSegment, SegmentResult, SegmentStatus } from "@/types";
 import { clampDuration } from "@/utils/video/helpers";
 import { Dispatch, SetStateAction, useCallback } from "react";
+import { toast } from "sonner";
 
 interface GenerateSegmentProps {
   seg: EnrichedSegment;
@@ -61,6 +62,9 @@ export async function generateSegment({seg, index, token, setResults, isRetry = 
               time: new Date(),
             },
           });
+          toast.error(`Scene ${index + 1} failed`, {
+            description: s.message ?? "Unknown generation error"
+          });
           job.cancel();
           return { quotaError: isQuota };
         } else {
@@ -114,6 +118,9 @@ export async function generateSegment({seg, index, token, setResults, isRetry = 
         message: err?.message ?? "Unknown error",
         time: new Date(),
       },
+    });
+    toast.error(`Scene ${index + 1} crashed`, {
+      description: err?.message ?? "Network or connection error"
     });
   }
 

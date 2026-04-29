@@ -10,6 +10,8 @@ import Fallback from "./_ui/fallback-video";
 import ComposedVideoPlayer from "./_ui/composed-video-player";
 import { useRemotionRender } from "@/hooks/useMotionRenderer";
 import Logo from "@/components/common/logo";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
@@ -42,6 +44,15 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
     const [phase, setPhase] = useState<"idle" | "generating" | "composing" | "done">("idle");
     const [composedVideoUrl, setComposedVideoUrl] = useState<string | null>(null);
 
+    // Watch for composition errors
+    useEffect(() => {
+      if (error) {
+        toast.error("Composition Failed", {
+          description: error
+        });
+      }
+    }, [error]);
+
     // Generate all segments sequentially
     async function runGeneration() {
       setPhase("generating");
@@ -57,6 +68,9 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
 
         if (quotaError) {
           firstQuotaIndex = i;
+          toast.warning("Quota reached", {
+            description: "Switching to your HuggingFace token to continue..."
+          });
           break;
         }
       }

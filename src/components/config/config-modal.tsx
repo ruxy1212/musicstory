@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, Save, Settings } from 'lucide-react';
 import { useKeys } from './keys-context';
 import { providers } from '@/lib/providers';
+import { toast } from 'sonner';
 
 interface ConfigModalProps {
   isOpen: boolean;
@@ -25,6 +26,9 @@ export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
       audioProvider: localAudioProvider,
       videoGenKey: localVideoGenKey,
       saveToLocalStorage: localSave,
+    });
+    toast.success("Configuration saved", {
+      description: "Your API keys have been updated."
     });
     onClose();
   };

@@ -3,6 +3,7 @@
 import { type ReactNode } from 'react';
 import { ProgressProvider } from '@bprogress/next/app';
 import { KeysProvider } from '@/components/config/keys-context';
+import { Toaster } from 'sonner';
 
 interface ProviderProps {
   children: ReactNode;
@@ -18,6 +19,7 @@ export function Providers({ children }: ProviderProps) {
     >
       <KeysProvider>
         {children}
+        <Toaster position="bottom-right" richColors />
       </KeysProvider>
     </ProgressProvider>
   )
