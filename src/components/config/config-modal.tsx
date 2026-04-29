@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Save, Settings } from 'lucide-react';
 import { useKeys } from './keys-context';
@@ -14,11 +14,17 @@ interface ConfigModalProps {
 
 export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
   const { textAudioKey, audioProvider, videoGenKey, saveToLocalStorage, setKeys } = useKeys();
-
   const [localTextAudioKey, setLocalTextAudioKey] = useState(textAudioKey);
   const [localAudioProvider, setLocalAudioProvider] = useState(audioProvider);
   const [localVideoGenKey, setLocalVideoGenKey] = useState(videoGenKey);
   const [localSave, setLocalSave] = useState(saveToLocalStorage);
+
+  useEffect(() => {
+    setLocalAudioProvider(audioProvider)
+    setLocalTextAudioKey(textAudioKey)
+    setLocalVideoGenKey(videoGenKey)
+    setLocalSave(saveToLocalStorage)
+  }, [audioProvider, textAudioKey, videoGenKey])
 
   const handleSave = () => {
     setKeys({
@@ -93,6 +99,7 @@ export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
                         onChange={(e) => setLocalAudioProvider(e.target.value)}
                         className="w-full capitalize bg-[#1A1635] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500/50 transition-colors appearance-none cursor-pointer"
                       >
+                        <option value="" className="capitalize">Choose Provider</option>
                         {Object.keys(providers).map((provider, i) => (
                           <option key={i} value={provider} className="capitalize">{provider}</option>
                         ))}

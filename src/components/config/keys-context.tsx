@@ -14,7 +14,7 @@ const KeysContext = createContext<KeysContextType | undefined>(undefined);
 
 export const KeysProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [textAudioKey, setTextAudioKey] = useState('');
-  const [audioProvider, setAudioProvider] = useState('opt1');
+  const [audioProvider, setAudioProvider] = useState('');
   const [videoGenKey, setVideoGenKey] = useState('');
   const [saveToLocalStorage, setSaveToLocalStorage] = useState(false);
 
@@ -25,7 +25,7 @@ export const KeysProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const parsed = JSON.parse(saved);
         setTextAudioKey(parsed.textAudioKey || '');
-        setAudioProvider(parsed.audioProvider || 'opt1');
+        setAudioProvider(parsed.audioProvider || '');
         setVideoGenKey(parsed.videoGenKey || '');
         setSaveToLocalStorage(true);
       } catch (e) {
