@@ -28,7 +28,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Musicstory",
+  title: "MusicStory",
   description: "Music to Video",
 };
 
