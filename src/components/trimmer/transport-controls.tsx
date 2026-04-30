@@ -47,11 +47,11 @@ export default function TransportControls({
             { label: 'Region Out', value: fmt(regionEnd),      color: 'text-[var(--primary)]' },
             { label: 'Duration',   value: fmtDur(duration),    color: 'text-[var(--accent)]' },
           ].map(({ label, value, color }) => (
-            <div key={label} className="flex flex-col gap-1 px-5 py-3">
+            <div key={label} className="flex flex-col gap-1 px-4 py-2 md:px-5 md:py-3">
               <span className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--text-3)]">
                 {label}
               </span>
-              <span className={`font-mono text-lg font-medium leading-none tracking-tight ${color}`}>
+              <span className={`font-mono text-base font-medium leading-none tracking-tight ${color} md:text-lg`}>
                 {value}
               </span>
             </div>
@@ -81,7 +81,7 @@ export default function TransportControls({
           onClick={isPlaying ? onPause : onPlay}
           aria-label={isPlaying ? 'Pause' : 'Play'}
           className={[
-            'group flex items-center gap-2.5 px-6 h-11 rounded-xl',
+            'group flex items-center gap-2.5 px-4 h-9 rounded-xl md:px-6 md:h-11',
             'border font-["Syne"] text-sm font-semibold tracking-wide',
             'transition-all duration-200 outline-none',
             'disabled:opacity-30 disabled:pointer-events-none',
@@ -106,7 +106,7 @@ export default function TransportControls({
           onClick={onProcess}
           aria-label="Process clip"
           className={[
-            'cursor-pointer group flex items-center justify-center gap-2.5 flex-1 h-11 rounded-xl',
+            'cursor-pointer group flex items-center justify-center gap-2.5 flex-1 h-9 rounded-xl md:h-11',
             'font-["Syne"] text-sm font-semibold tracking-wide text-white',
             'bg-gradient-to-r from-[var(--primary)] to-[#7c3aed]',
             'shadow-[0_4px_16px_var(--primary-glow)]',
@@ -124,7 +124,7 @@ export default function TransportControls({
           ) : (
             <>
               <Wand2 size={16} />
-              Process Clip
+              Process <span className="hidden md:inline">Clip</span>
             </>
           )}
         </button>

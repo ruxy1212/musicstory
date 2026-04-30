@@ -41,7 +41,7 @@ export const metadata: Metadata = {
         url: "/og.jpg",
         width: 1200,
         height: 630,
-        alt: "MusicStory AI Video Generator",
+        alt: "Music tracks to cinematic visual journey",
       },
     ],
     locale: "en_US",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MusicStory | AI Music Video Generator",
+    title: "MusicStory | Music tracks into cinematic visual journey",
     description: "Transform your audio tracks into cinematic visual journeys with AI-powered scene generation.",
     images: ["/og.jpg"],
   },

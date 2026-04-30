@@ -108,17 +108,17 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
   }, [file, region, textAudioKey, audioProvider, onGenerate, setTitle])
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 bg-[var(--bg-base)]">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-base)] md:p-6 lg:p-8">
 
       {/* Ambient blobs */}
       <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-[var(--primary-glow)] blur-[120px] opacity-30 pointer-events-none -translate-x-1/2 -translate-y-1/2" />
       <div className="fixed bottom-0 right-0 w-[380px] h-[380px] rounded-full bg-[var(--accent-glow)] blur-[100px] opacity-20 pointer-events-none translate-x-1/3 translate-y-1/3" />
 
       {/* Card */}
-      <div className="scanlines relative z-10 w-full max-w-2xl rounded-2xl border border-[var(--border-hi)] bg-[var(--bg-surface)] shadow-[0_24px_64px_rgba(0,0,0,0.6)]">
+      <div className="scanlines relative mt-16 mb-20 z-10 w-full max-w-2xl rounded-2xl border border-[var(--border-hi)] bg-[var(--bg-surface)] shadow-[0_24px_64px_rgba(0,0,0,0.6)] md:mb-0">
 
         {/* Header */}
-        <div className="flex flex-col items-center justify-between gap-4 px-7 py-5 border-b border-[var(--border)] md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 p-5 border-b border-[var(--border)] md:flex-row md:px-7">
           <div className="flex items-center gap-3.5">
             {/* Logo mark */}
             <Logo />
@@ -127,7 +127,7 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
                 Audio Trimmer
               </h1>
               <p className="text-[11px] text-[var(--text-3)] tracking-wide mt-px">
-                12 to 30 seconds · drag region to set trim points
+                12 to 30 seconds · drag <span className="hidden md:inline">region</span> to set trim <span className="hidden md:inline">points</span>
               </p>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
         </div>
 
         {/* Body */}
-        <div className="p-7 flex flex-col gap-5">
+        <div className="p-5 flex flex-col gap-5 md:px-7">
           {!file ? (
             <UploadZone onFile={handleFile} />
           ) : (
