@@ -66,7 +66,7 @@ const Waveform = forwardRef<WaveformHandle, WaveformProps>(
         const duration = ws.getDuration()
         onReady(duration)
 
-        const initialEnd = Math.min(30, Math.max(12, duration > 12 ? 12 : duration))
+        const initialEnd = Math.max(12, Math.min(30, duration < 30 ? duration : 30))
         const region = wsRegions.addRegion({
           start: 0,
           end: initialEnd,

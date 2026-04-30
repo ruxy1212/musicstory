@@ -5,6 +5,7 @@ import { GeneratedVideo } from "@/types";
 import { useKeys } from "@/components/config/keys-context";
 import { Loader2, Play, Heart, Share2, User, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { toast } from "sonner";
 
 // In a real app, this would be a configured environment variable
 const serverUrl = process.env.NEXT_PUBLIC_RENDER_SERVER_URL || 'http://localhost:3001';
@@ -34,18 +35,19 @@ export default function VideoGallery() {
       
       const data = await response.json();
       
-      // Assume data.videos is an array of GeneratedVideo
-      if (isNewTab) {
-        setVideos(data.videos || []);
-      } else {
-        setVideos(prev => [...prev, ...(data.videos || [])]);
+      if (data.success) {
+        const videos = data.data
+        if (isNewTab) {
+          setVideos(videos || []);
+        } else {
+          setVideos(prev => [...prev, ...(videos || [])]);
+        }
+        
+        setHasMore(videos && videos.length === 6);
       }
       
-      setHasMore(data.videos && data.videos.length === 6);
-    } catch (err) {
-      console.error("Fetch error:", err);
-      // For demonstration, if it fails (e.g. server down), we don't show mock data 
-      // but we ensure the UI doesn't crash.
+    } catch (err: unknown) {
+      toast.error("Fetch error: " + (err instanceof Error ? err.message : "Something went wrong"))
       if (pageNum === 1) {
          setVideos([]);
       }

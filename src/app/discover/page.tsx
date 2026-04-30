@@ -1,12 +1,12 @@
 "use client";
 
-import VideoGallery from "@/components/discover/video-gallery";
+import VideoGallery from "@/components/discover";
 import Header from "@/components/common/header";
 
-export default function GalleryPage() {
+export default function Page() {
   return (
     <div className="bg-background text-alter-primary min-h-screen font-sans selection:bg-primary-glow">
-      <Header location="Gallery" />
+      <Header location="Discover" />
       
       <main className="w-full relative overflow-hidden">
         {/* Ambient background effects */}
