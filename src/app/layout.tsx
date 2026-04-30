@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "MusicStory",
     images: [
       {
-        url: "/og.jpg",
+        url: "/og-1.jpg",
         width: 1200,
         height: 630,
         alt: "Music tracks to cinematic visual journey",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MusicStory | Music tracks into cinematic visual journey",
     description: "Transform your audio tracks into cinematic visual journeys with AI-powered scene generation.",
-    images: ["/og.jpg"],
+    images: ["/og-1.jpg"],
   },
 };
 
