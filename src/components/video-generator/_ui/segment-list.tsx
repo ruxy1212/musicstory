@@ -2,7 +2,7 @@ import { SegmentResult } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
 import { stageColor, statusLabel } from "@/components/video-generator/_fragments/render";
 
-export default function SegmentList({ results }: { results: SegmentResult[]}) {
+export default function SegmentList({ results }: { results: SegmentResult[] }) {
   return (
     <div className="relative flex flex-col min-h-50 justify-end mb-2">
       <div className="absolute w-full top-0 h-14 bg-gradient-to-b from-[var(--bg-surface)] to-transparent"></div>
@@ -28,15 +28,15 @@ export default function SegmentList({ results }: { results: SegmentResult[]}) {
                 }}
                 className="grid grid-cols-[32px_1fr_12px] items-center gap-4 p-4 rounded-xl border transition-all duration-300"
               >
-                <span className="font-mono text-[11px] text-[var(--text-muted)] tabular-nums">
+                <span className="font-mono text-[11px] text-alter-muted tabular-nums">
                   {String(i + 1).padStart(2, "0")}
                 </span>
 
                 <div>
-                  <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed mb-1">
+                  <p className="text-[13px] text-alter-secondary leading-relaxed mb-1">
                     {r.segment.text}
                   </p>
-                  <p 
+                  <p
                     className="font-mono text-[10px] uppercase tracking-wider"
                     style={{ color: stageColor(r.status.stage) }}
                   >

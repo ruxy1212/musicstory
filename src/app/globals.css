@@ -31,10 +31,10 @@
   --region-border:  #6366f180;
 
   /* Text */
-  --text-primary:   #e8eaf6;
-  --text-secondary: #8b8fa8;
-  --text-muted:     #4b4f68;
-  --text-accent:    #22d3ee;
+  --alter-primary:   #e8eaf6;
+  --alter-secondary: #8b8fa8;
+  --alter-muted:     #4b4f68;
+  --alter-accent:    #22d3ee;
 
   /* Borders */
   --border:         #1e2240;
@@ -60,7 +60,7 @@
 
   /* Background & foreground aliases */
   --background:     var(--bg-base);
-  --foreground:     var(--text-primary);
+  --foreground:     var(--alter-primary);
 }
 
 /* Reset dark/light media query — single theme only */
@@ -71,6 +71,35 @@
   --font-geist-mono: var(--font-geist-mono);
   --font-display: var(--font-syne);
   --font-mono: var(--font-jetbrains);
+
+  --color-base: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-overlay: var(--bg-overlay);
+  --color-primary: var(--primary);
+  --color-primary-glow: var(--primary-glow);
+  --color-primary-dim: var(--primary-dim);
+  --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent);
+  --color-accent-glow: var(--accent-glow);
+  --color-accent-dim: var(--accent-dim);
+  --color-accent-hover: var(--accent-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-glow: var(--secondary-glow);
+  --color-wave-color: var(--wave-color);
+  --color-wave-progress: var(--wave-progress);
+  --color-region-fill: var(--region-fill);
+  --color-region-border: var(--region-border);
+  --color-alter-primary: var(--alter-primary);
+  --color-alter-secondary: var(--alter-secondary);
+  --color-alter-muted: var(--alter-muted);
+  --color-alter-accent: var(--alter-accent);
+  --color-border: var(--border);
+  --color-border-bright: var(--border-bright);
+  --color-border-glow: var(--border-glow);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
 }
 
 /* ─── Base ────────────────────────────────────────────────────────────────── */
@@ -85,7 +114,7 @@ html {
 
 body {
   background: var(--bg-base);
-  color: var(--text-primary);
+  color: var(--alter-primary);
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.6;
@@ -110,7 +139,7 @@ body {
 /* ─── Selection ───────────────────────────────────────────────────────────── */
 ::selection {
   background: var(--primary-glow);
-  color: var(--text-primary);
+  color: var(--alter-primary);
 }
 
 /* ─── Focus ───────────────────────────────────────────────────────────────── */

@@ -18,7 +18,7 @@ function fmt(s: number) {
   const m = Math.floor(s / 60)
   const sec = Math.floor(s % 60)
   const ms = Math.floor((s % 1) * 100)
-  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}.${String(ms).padStart(2,'0')}`
+  return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(ms).padStart(2, '0')}`
 }
 
 function fmtDur(s: number) {
@@ -37,15 +37,15 @@ export default function TransportControls({
     <div className="flex flex-col gap-3 animate-fade-up">
 
       {/* Timer strip */}
-      <div className="rounded-xl border border-[var(--border-hi)] bg-[var(--bg-elevated)] overflow-hidden">
+      <div className="rounded-xl border border-[var(--border-hi)] bg-elevated overflow-hidden">
 
         {/* Four time values */}
-        <div className="grid grid-cols-2 divide-x divide-[var(--border)] md:grid-cols-4">
+        <div className="grid grid-cols-2 divide-x divide-border md:grid-cols-4">
           {[
-            { label: 'Position',   value: fmt(currentTime),    color: 'text-[var(--text-1)]' },
-            { label: 'Region In',  value: fmt(regionStart),    color: 'text-[var(--primary)]' },
-            { label: 'Region Out', value: fmt(regionEnd),      color: 'text-[var(--primary)]' },
-            { label: 'Duration',   value: fmtDur(duration),    color: 'text-[var(--accent)]' },
+            { label: 'Position', value: fmt(currentTime), color: 'text-[var(--text-1)]' },
+            { label: 'Region In', value: fmt(regionStart), color: 'text-primary' },
+            { label: 'Region Out', value: fmt(regionEnd), color: 'text-primary' },
+            { label: 'Duration', value: fmtDur(duration), color: 'text-accent' },
           ].map(({ label, value, color }) => (
             <div key={label} className="flex flex-col gap-1 px-4 py-2 md:px-5 md:py-3">
               <span className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--text-3)]">
@@ -59,14 +59,14 @@ export default function TransportControls({
         </div>
 
         {/* Clip progress bar */}
-        <div className="relative h-[2px] bg-[var(--border)]">
+        <div className="relative h-[2px] bg-border">
           <div
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] transition-all duration-75"
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary to-accent transition-all duration-75"
             style={{ width: `${pct}%` }}
           />
           {/* Cursor dot */}
           <div
-            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[var(--accent)] shadow-[0_0_6px_var(--accent-glow)] transition-all duration-75"
+            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-accent shadow-[0_0_6px_var(--accent-glow)] transition-all duration-75"
             style={{ left: `${pct}%`, opacity: isPlaying ? 1 : 0 }}
           />
         </div>
@@ -86,16 +86,16 @@ export default function TransportControls({
             'transition-all duration-200 outline-none',
             'disabled:opacity-30 disabled:pointer-events-none',
             isPlaying
-              ? 'bg-[var(--primary-dim)] border-[var(--primary)] text-white shadow-[0_0_16px_var(--primary-glow)]'
-              : 'bg-[var(--bg-elevated)] border-[var(--border-hi)] text-[var(--text-2)]',
+              ? 'bg-primary-dim border-primary text-white shadow-[0_0_16px_var(--primary-glow)]'
+              : 'bg-elevated border-[var(--border-hi)] text-[var(--text-2)]',
             !isPlaying && isReady
-              ? 'hover:border-[var(--primary)] hover:text-white hover:shadow-[0_0_16px_var(--primary-glow)] hover:-translate-y-px'
+              ? 'hover:border-primary hover:text-white hover:shadow-[0_0_16px_var(--primary-glow)] hover:-translate-y-px'
               : '',
           ].join(' ')}
         >
           {isPlaying
             ? <Pause size={16} className="fill-current" />
-            : <Play  size={16} className="fill-current" />
+            : <Play size={16} className="fill-current" />
           }
           {isPlaying ? 'Pause' : 'Play'}
         </button>
@@ -108,7 +108,7 @@ export default function TransportControls({
           className={[
             'cursor-pointer group flex items-center justify-center gap-2.5 flex-1 h-9 rounded-xl md:h-11',
             'font-["Syne"] text-sm font-semibold tracking-wide text-white',
-            'bg-gradient-to-r from-[var(--primary)] to-[#7c3aed]',
+            'bg-gradient-to-r from-primary to-[#7c3aed]',
             'shadow-[0_4px_16px_var(--primary-glow)]',
             'transition-all duration-200 outline-none',
             'hover:shadow-[0_6px_24px_var(--primary-glow)] hover:-translate-y-px hover:brightness-110',

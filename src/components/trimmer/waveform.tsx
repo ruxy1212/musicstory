@@ -79,7 +79,7 @@ const Waveform = forwardRef<WaveformHandle, WaveformProps>(
           let newStart = region.start
           let newEnd = region.end
           const currentDuration = newEnd - newStart
-          
+
           if (currentDuration > 30) {
             newEnd = newStart + 30
           } else if (currentDuration < 12 && duration >= 12) {
@@ -89,7 +89,7 @@ const Waveform = forwardRef<WaveformHandle, WaveformProps>(
               newStart = Math.max(0, newEnd - 12)
             }
           }
-          
+
           if (newStart !== region.start || newEnd !== region.end) {
             region.setOptions({ start: newStart, end: newEnd })
           }
@@ -119,18 +119,18 @@ const Waveform = forwardRef<WaveformHandle, WaveformProps>(
     }, [file])
 
     return (
-      <div className="relative rounded-xl overflow-hidden bg-[var(--bg-elevated)] border border-[var(--border-hi)]">
+      <div className="relative rounded-xl overflow-hidden bg-elevated border border-[var(--border-hi)]">
 
         {/* Loading overlay */}
         {isLoading && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 px-6 bg-[var(--bg-elevated)]">
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 px-6 bg-elevated">
 
             {/* Animated bars */}
             <div className="bar-stagger flex items-end gap-[3px] h-12 w-full max-w-[200px]">
               {Array.from({ length: 16 }).map((_, i) => (
                 <div
                   key={i}
-                  className="animate-bar-breathe flex-1 rounded-sm bg-gradient-to-t from-[var(--primary)] to-[var(--accent)]"
+                  className="animate-bar-breathe flex-1 rounded-sm bg-gradient-to-t from-primary to-accent"
                 />
               ))}
             </div>
@@ -141,13 +141,13 @@ const Waveform = forwardRef<WaveformHandle, WaveformProps>(
                 <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--text-3)]">
                   Decoding
                 </span>
-                <span className="font-mono text-[10px] text-[var(--accent)]">
+                <span className="font-mono text-[10px] text-accent">
                   {Math.round(progress)}%
                 </span>
               </div>
-              <div className="h-px bg-[var(--border)] rounded-full overflow-hidden">
+              <div className="h-px bg-border rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] transition-all duration-200"
+                  className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-200"
                   style={{ width: `${progress}%` }}
                 />
               </div>

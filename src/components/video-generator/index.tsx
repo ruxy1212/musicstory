@@ -105,15 +105,15 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
     const total = segments.length;
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-base)] md:p-6 lg:p-8">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-base md:p-6 lg:p-8">
         {/* Ambient blobs */}
-        <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-[var(--primary-glow)] blur-[120px] opacity-30 pointer-events-none -translate-x-1/2 -translate-y-1/2" />
-        <div className="fixed bottom-0 right-0 w-[380px] h-[380px] rounded-full bg-[var(--accent-glow)] blur-[100px] opacity-20 pointer-events-none translate-x-1/3 translate-y-1/3" />
+        <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary-glow blur-[120px] opacity-30 pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+        <div className="fixed bottom-0 right-0 w-[380px] h-[380px] rounded-full bg-accent-glow blur-[100px] opacity-20 pointer-events-none translate-x-1/3 translate-y-1/3" />
 
         {/* Card */}
-        <div className="scanlines relative mt-16 mb-20 z-10 w-full max-w-5xl rounded-2xl border border-[var(--border-hi)] bg-[var(--bg-surface)] shadow-[0_24px_64px_rgba(0,0,0,0.6)] md:mb-0">
+        <div className="scanlines relative mt-16 mb-20 z-10 w-full max-w-5xl rounded-2xl border border-[var(--border-hi)] bg-surface shadow-[0_24px_64px_rgba(0,0,0,0.6)] md:mb-0">
           {/* Header */}
-          <div className="flex flex-col items-center justify-between gap-4 p-5 border-b border-[var(--border)] md:flex-row md:px-7">
+          <div className="flex flex-col items-center justify-between gap-4 p-5 border-b border-border md:flex-row md:px-7">
             <div className="flex items-center gap-3.5">
               {/* Logo mark */}
               <Logo />
@@ -128,10 +128,10 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
             </div>
 
             {/* Status badge */}
-            <div className="flex items-center gap-2 pl-2.5 pr-1.5 py-1.5 rounded-full border border-[var(--border-hi)] bg-[var(--bg-elevated)]">
+            <div className="flex items-center gap-2 pl-2.5 pr-1.5 py-1.5 rounded-full border border-[var(--border-hi)] bg-elevated">
               <span className={[
                 'w-1.5 h-1.5 rounded-full flex-shrink-0',
-                phase === 'done' ? 'bg-[var(--success)] shadow-[0_0_6px_var(--success)]' : 'bg-[var(--primary)] animate-pulse-dot',
+                phase === 'done' ? 'bg-success shadow-[0_0_6px_var(--success)]' : 'bg-primary animate-pulse-dot',
               ].join(' ')} />
               <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-2)] px-1">
                 {phase}
@@ -165,7 +165,7 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
                   controls={true}
                   className="rounded-2xl shadow-2xl"
                 />
-                
+
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                   <button
                     onClick={() => {
@@ -174,20 +174,20 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
                       a.download = `${title || 'video'}.mp4`;
                       a.click();
                     }}
-                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[var(--primary)] text-white font-['Syne'] font-bold text-sm hover:bg-[var(--primary-hover)] transition-all shadow-[0_8px_24px_var(--primary-glow)] flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-primary text-white font-['Syne'] font-bold text-sm hover:bg-primary-hover transition-all shadow-[0_8px_24px_var(--primary-glow)] flex items-center justify-center gap-2"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
                     Download Video
                   </button>
-                  
+
                   <button
                     onClick={() => window.location.reload()}
-                    className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-[var(--border-hi)] bg-[var(--bg-elevated)] text-[var(--text-1)] font-['Syne'] font-bold text-sm hover:bg-[var(--bg-overlay)] transition-all flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-[var(--border-hi)] bg-elevated text-[var(--text-1)] font-['Syne'] font-bold text-sm hover:bg-overlay transition-all flex items-center justify-center gap-2"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                      <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
                     Create New
                   </button>
@@ -197,34 +197,34 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
 
             {phase === "done" && !composedVideoUrl && !isRendering && (
               <div className="flex flex-col gap-8 animate-fade-up">
-                <div className="p-6 rounded-2xl bg-[var(--error)] bg-opacity-5 border border-[var(--error)] border-opacity-20 flex items-center gap-4">
-                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[var(--error)] flex items-center justify-center text-white">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                      </svg>
-                   </div>
-                   <div>
-                     <h3 className="text-[var(--text-1)] font-bold font-['Syne']">Composition Failed</h3>
-                     <p className="text-[var(--text-3)] text-xs font-mono">Individual scenes were generated successfully, but stitching them together failed. You can still view the scenes below.</p>
-                   </div>
+                <div className="p-6 rounded-2xl bg-error bg-opacity-5 border border-error border-opacity-20 flex items-center gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-error flex items-center justify-center text-white">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-[var(--text-1)] font-bold font-['Syne']">Composition Failed</h3>
+                    <p className="text-[var(--text-3)] text-xs font-mono">Individual scenes were generated successfully, but stitching them together failed. You can still view the scenes below.</p>
+                  </div>
                 </div>
 
                 <Fallback results={results} />
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 border-t border-[var(--border)]">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 border-t border-border">
                   <button
                     onClick={runGeneration}
-                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[var(--primary)] text-white font-['Syne'] font-bold text-sm hover:bg-[var(--primary-hover)] transition-all shadow-[0_8px_24px_var(--primary-glow)] flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-primary text-white font-['Syne'] font-bold text-sm hover:bg-primary-hover transition-all shadow-[0_8px_24px_var(--primary-glow)] flex items-center justify-center gap-2"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                      <path d="M23 4v6h-6" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
                     </svg>
                     Regenerate Video
                   </button>
 
                   <button
                     onClick={() => window.location.reload()}
-                    className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-[var(--border-hi)] bg-[var(--bg-elevated)] text-[var(--text-1)] font-['Syne'] font-bold text-sm hover:bg-[var(--bg-overlay)] transition-all flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-[var(--border-hi)] bg-elevated text-[var(--text-1)] font-['Syne'] font-bold text-sm hover:bg-overlay transition-all flex items-center justify-center gap-2"
                   >
                     Create New
                   </button>

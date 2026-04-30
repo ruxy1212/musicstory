@@ -68,7 +68,7 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
           'x-provider': audioProvider
         }
       })
-      
+
       const transcriptionJson = await transcription.json()
       if (transcriptionJson.error) {
         throw new Error(transcriptionJson.error)
@@ -88,7 +88,7 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
         },
         body: JSON.stringify(transcriptionJson)
       })
-      
+
       const enrichedTranscriptionJson = await enrichedTranscription.json()
       if (enrichedTranscriptionJson.error) {
         throw new Error(enrichedTranscriptionJson.error)
@@ -108,17 +108,17 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
   }, [file, region, textAudioKey, audioProvider, onGenerate, setTitle])
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-base)] md:p-6 lg:p-8">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-base md:p-6 lg:p-8">
 
       {/* Ambient blobs */}
-      <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-[var(--primary-glow)] blur-[120px] opacity-30 pointer-events-none -translate-x-1/2 -translate-y-1/2" />
-      <div className="fixed bottom-0 right-0 w-[380px] h-[380px] rounded-full bg-[var(--accent-glow)] blur-[100px] opacity-20 pointer-events-none translate-x-1/3 translate-y-1/3" />
+      <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary-glow blur-[120px] opacity-30 pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+      <div className="fixed bottom-0 right-0 w-[380px] h-[380px] rounded-full bg-accent-glow blur-[100px] opacity-20 pointer-events-none translate-x-1/3 translate-y-1/3" />
 
       {/* Card */}
-      <div className="scanlines relative mt-16 mb-20 z-10 w-full max-w-2xl rounded-2xl border border-[var(--border-hi)] bg-[var(--bg-surface)] shadow-[0_24px_64px_rgba(0,0,0,0.6)] md:mb-0">
+      <div className="scanlines relative mt-16 mb-20 z-10 w-full max-w-2xl rounded-2xl border border-[var(--border-hi)] bg-surface shadow-[0_24px_64px_rgba(0,0,0,0.6)] md:mb-0">
 
         {/* Header */}
-        <div className="flex flex-col items-center justify-between gap-4 p-5 border-b border-[var(--border)] md:flex-row md:px-7">
+        <div className="flex flex-col items-center justify-between gap-4 p-5 border-b border-border md:flex-row md:px-7">
           <div className="flex items-center gap-3.5">
             {/* Logo mark */}
             <Logo />
@@ -134,11 +134,11 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
 
           {/* File pill */}
           {file && (
-            <div className="flex items-center gap-2 pl-2.5 pr-1.5 py-1.5 rounded-full border border-[var(--border-hi)] bg-[var(--bg-elevated)] max-w-[200px]">
+            <div className="flex items-center gap-2 pl-2.5 pr-1.5 py-1.5 rounded-full border border-[var(--border-hi)] bg-elevated max-w-[200px]">
               <span className={[
                 'w-1.5 h-1.5 rounded-full flex-shrink-0',
                 isReady
-                  ? 'bg-[var(--success)] shadow-[0_0_6px_theme(colors.green.500)]'
+                  ? 'bg-success shadow-[0_0_6px_theme(colors.green.500)]'
                   : 'bg-yellow-500 animate-pulse-dot',
               ].join(' ')} />
               <span className="font-mono text-[10px] text-[var(--text-2)] truncate">
@@ -147,7 +147,7 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
               <button
                 onClick={() => { setFile(null); setIsReady(false) }}
                 aria-label="Remove file"
-                className="cursor-pointer flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full text-[var(--text-3)] hover:text-[var(--error)] hover:bg-[var(--bg-overlay)] transition-colors duration-150"
+                className="cursor-pointer flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full text-[var(--text-3)] hover:text-error hover:bg-overlay transition-colors duration-150"
               >
                 <X size={11} />
               </button>
@@ -163,7 +163,7 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
             <>
               {/* Hint */}
               <div className="flex items-center gap-1.5">
-                <ChevronRight size={11} className="text-[var(--primary)]" />
+                <ChevronRight size={11} className="text-primary" />
                 <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--text-3)]">
                   Select region to trim
                 </span>

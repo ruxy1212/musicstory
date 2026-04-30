@@ -47,12 +47,12 @@ export default function UploadZone({ onFile }: UploadZoneProps) {
         'group relative flex flex-col items-center justify-center gap-5 px-10 py-16',
         'rounded-2xl cursor-pointer select-none outline-none',
         'border transition-all duration-300',
-        'bg-[var(--bg-surface)]',
+        'bg-surface',
         isDragging
-          ? 'border-[var(--accent)] shadow-[0_0_32px_var(--accent-glow)] scale-[1.01]'
+          ? 'border-accent shadow-[0_0_32px_var(--accent-glow)] scale-[1.01]'
           : isError
-          ? 'border-[var(--error)] animate-shake'
-          : 'border-[var(--border-hi)] hover:border-[var(--primary)] hover:shadow-[0_0_24px_var(--primary-glow)] hover:-translate-y-0.5',
+            ? 'border-error animate-shake'
+            : 'border-[var(--border-hi)] hover:border-primary hover:shadow-[0_0_24px_var(--primary-glow)] hover:-translate-y-0.5',
       ].join(' ')}
     >
       <input
@@ -67,25 +67,25 @@ export default function UploadZone({ onFile }: UploadZoneProps) {
       <div className={[
         'flex items-center justify-center w-16 h-16 rounded-full',
         'border transition-all duration-300',
-        'bg-[var(--bg-elevated)]',
+        'bg-elevated',
         isDragging
-          ? 'border-[var(--accent)] shadow-[0_0_16px_var(--accent-glow)]'
-          : 'border-[var(--border-hi)] group-hover:border-[var(--primary)] group-hover:shadow-[0_0_14px_var(--primary-glow)]',
+          ? 'border-accent shadow-[0_0_16px_var(--accent-glow)]'
+          : 'border-[var(--border-hi)] group-hover:border-primary group-hover:shadow-[0_0_14px_var(--primary-glow)]',
       ].join(' ')}>
         {isDragging
-          ? <FileAudio size={26} className="text-[var(--accent)] animate-bounce" />
-          : <Music size={26} className="text-[var(--text-2)] group-hover:text-[var(--primary)] transition-colors duration-300" />
+          ? <FileAudio size={26} className="text-accent animate-bounce" />
+          : <Music size={26} className="text-[var(--text-2)] group-hover:text-primary transition-colors duration-300" />
         }
       </div>
 
       {/* Text */}
       <div className="flex flex-col items-center gap-1.5 text-center">
         {isError ? (
-          <span className="font-['Syne'] text-base font-semibold text-[var(--error)]">
+          <span className="font-['Syne'] text-base font-semibold text-error">
             Audio files only — MP3, WAV, FLAC, M4A
           </span>
         ) : isDragging ? (
-          <span className="font-['Syne'] text-base font-semibold tracking-widest uppercase text-[var(--accent)]">
+          <span className="font-['Syne'] text-base font-semibold tracking-widest uppercase text-accent">
             Release to load
           </span>
         ) : (
@@ -95,7 +95,7 @@ export default function UploadZone({ onFile }: UploadZoneProps) {
             </span>
             <span className="text-sm text-[var(--text-2)]">
               or{' '}
-              <span className="text-[var(--primary)] underline underline-offset-2">
+              <span className="text-primary underline underline-offset-2">
                 click to browse
               </span>
               {' '}— MP3, WAV, FLAC, M4A
@@ -105,11 +105,11 @@ export default function UploadZone({ onFile }: UploadZoneProps) {
       </div>
 
       {/* Corner accents */}
-      {(['tl','tr','bl','br'] as const).map((pos) => (
+      {(['tl', 'tr', 'bl', 'br'] as const).map((pos) => (
         <span
           key={pos}
           className={[
-            'absolute w-4 h-4 border-[var(--primary)] transition-all duration-300 opacity-40 group-hover:opacity-100',
+            'absolute w-4 h-4 border-primary transition-all duration-300 opacity-40 group-hover:opacity-100',
             pos === 'tl' ? 'top-3 left-3 border-t-2 border-l-2' : '',
             pos === 'tr' ? 'top-3 right-3 border-t-2 border-r-2' : '',
             pos === 'bl' ? 'bottom-3 left-3 border-b-2 border-l-2' : '',
