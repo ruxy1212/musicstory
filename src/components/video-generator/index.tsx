@@ -105,7 +105,7 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
     const total = segments.length;
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-base md:p-6 lg:p-8">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-background md:p-6 lg:p-8">
         {/* Ambient blobs */}
         <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary-glow blur-[120px] opacity-30 pointer-events-none -translate-x-1/2 -translate-y-1/2" />
         <div className="fixed bottom-0 right-0 w-[380px] h-[380px] rounded-full bg-accent-glow blur-[100px] opacity-20 pointer-events-none translate-x-1/3 translate-y-1/3" />

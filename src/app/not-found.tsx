@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-base relative overflow-hidden md:p-6 lg:p-8">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden md:p-6 lg:p-8">
 
       {/* Ambient blobs — same as AudioTrimmer */}
       <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary-glow blur-[120px] opacity-30 pointer-events-none -translate-x-1/2 -translate-y-1/2" />

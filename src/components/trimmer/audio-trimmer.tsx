@@ -108,7 +108,7 @@ export default function AudioTrimmer({ onGenerate, setTitle }: AudioTrimmerProps
   }, [file, region, textAudioKey, audioProvider, onGenerate, setTitle])
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-base md:p-6 lg:p-8">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background/80 md:p-6 lg:p-8">
 
       {/* Ambient blobs */}
       <div className="fixed top-0 left-0 w-[500px] h-[500px] rounded-full bg-primary-glow blur-[120px] opacity-30 pointer-events-none -translate-x-1/2 -translate-y-1/2" />

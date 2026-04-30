@@ -12,7 +12,7 @@ import Header from "@/components/common/header";
 
 export default function LandingPage() {
   return (
-    <div className="bg-base text-alter-primary min-h-screen font-sans selection:bg-primary-glow">
+    <div className="bg-background text-alter-primary min-h-screen font-sans selection:bg-primary-glow">
       {/* Main Canvas */}
       <main className="w-full max-w-[var(--container-max)] mx-auto flex flex-col items-center gap-[var(--stack-lg)] p-[var(--stack-md)] md:p-[var(--stack-xl)]">
         <Header location="Home" />
