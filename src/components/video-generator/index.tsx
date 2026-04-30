@@ -5,7 +5,6 @@ import { SegmentResult, VideoGeneratorProps, VideoGeneratorHandle } from "@/type
 import { initialStatus } from "@/utils/video/helpers";
 import { generateSegment } from "./_fragments/segment";
 import { composeVideo } from "./_fragments/compose";
-import { stageColor, statusLabel } from "./_fragments/render";
 import Fallback from "./_ui/fallback-video";
 import ComposedVideoPlayer from "./_ui/composed-video-player";
 import { useRemotionRender } from "@/hooks/useMotionRenderer";
@@ -13,7 +12,9 @@ import Logo from "@/components/common/logo";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { resultsStatic } from "@/app/test-rendering/page";
-import { AnimatePresence, motion } from "motion/react";
+import SegmentList from "./_ui/segment-list";
+import ComposingBlock from "./_ui/composing-block";
+import ProgressBlock from "./_ui/progress-block";
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
@@ -43,10 +44,10 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
     //   }))
     // );
     const [results, setResults] = useState<SegmentResult[]>(resultsStatic);
-    const [phase, setPhase] = useState<"idle" | "generating" | "composing" | "done">("generating");
+    const [phase, setPhase] = useState<"idle" | "generating" | "composing" | "done">("done");
 
     // const [phase, setPhase] = useState<"idle" | "generating" | "composing" | "done">("idle");
-    const [composedVideoUrl, setComposedVideoUrl] = useState<string | null>(null);
+    const [composedVideoUrl, setComposedVideoUrl] = useState<string | null>("/samples/g5dmw7vws4ypr18m4iuf.mp4"); //null
 
     // Watch for composition errors
     useEffect(() => {
@@ -147,122 +148,15 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
             {phase === "generating" && (
               <div className="animate-fade-up">
                 {/* Segment list */}
-                <div className="relative flex flex-col min-h-50 justify-end mb-2">
-                  <div className="absolute w-full top-0 h-14 bg-gradient-to-b from-[var(--bg-surface)] to-transparent"></div>
-                  <div className="flex flex-col gap-2 max-h-100 overflow-y-auto pr-2 custom-scrollbar">
-                    <AnimatePresence initial={false}>
-                      {results.map((r, i) => (
-                        r.status.stage !== "pending" && (
-                          <motion.div
-                            key={i}
-                            layout
-                            initial={{ opacity: 0, height: 0, y: 20 }}
-                            animate={{ opacity: 1, height: "auto", y: 0 }}
-                            transition={{
-                              type: "spring",
-                              stiffness: 400,
-                              damping: 30,
-                              opacity: { duration: 0.2 }
-                            }}
-                            style={{
-                              background: "var(--bg-elevated)",
-                              borderColor: r.status.stage === "generating" ? "var(--primary-glow)" : "var(--border)",
-                              boxShadow: r.status.stage === "generating" ? "0 0 20px var(--primary-dim)" : "none"
-                            }}
-                            className="grid grid-cols-[32px_1fr_12px] items-center gap-4 p-4 rounded-xl border transition-all duration-300"
-                          >
-                            <span className="font-mono text-[11px] text-[var(--text-muted)] tabular-nums">
-                              {String(i + 1).padStart(2, "0")}
-                            </span>
-
-                            <div>
-                              <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed mb-1">
-                                {r.segment.text}
-                              </p>
-                              <p 
-                                className="font-mono text-[10px] uppercase tracking-wider"
-                                style={{ color: stageColor(r.status.stage) }}
-                              >
-                                {statusLabel(r)}
-                              </p>
-                            </div>
-
-                            <div
-                              className="w-2 h-2 rounded-full"
-                              style={{
-                                background: stageColor(r.status.stage),
-                                boxShadow: r.status.stage === "generating" ? `0 0 10px ${stageColor(r.status.stage)}` : "none",
-                              }}
-                            />
-                          </motion.div>
-                        )
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                </div>
+                <SegmentList results={results} />
 
                 {/* Progress summary */}
-                <div className="p-6 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border)] relative overflow-hidden">
-                  <div className="flex justify-between items-end mb-3">
-                    <div>
-                      <h4 className="text-[var(--text-1)] font-['Syne'] font-bold text-sm">Processing Pipeline</h4>
-                      <p className="text-[11px] text-[var(--text-3)] font-mono mt-1">
-                        {completedCount} of {total} scenes complete {failedCount > 0 && `(${failedCount} failed)`}
-                      </p>
-                    </div>
-                    <span className="text-[var(--primary)] font-mono text-lg font-bold">
-                      {Math.round((completedCount / total) * 100)}%
-                    </span>
-                  </div>
-                  
-                  <div className="h-1.5 w-full bg-[var(--bg-surface)] rounded-full overflow-hidden border border-[var(--border)]">
-                    <div
-                      className="h-full bg-[var(--primary)] transition-all duration-700 ease-out"
-                      style={{ width: `${(completedCount / total) * 100}%` }}
-                    />
-                  </div>
-                </div>
+                <ProgressBlock completedCount={completedCount} failedCount={failedCount} total={total} />
               </div>
             )}
 
             {(phase === "composing" || (phase === "done" && !composedVideoUrl && isRendering)) && (
-              <div className="flex flex-col items-center justify-center py-12 gap-8 animate-fade-up">
-                <div className="relative w-24 h-24">
-                  <div className="absolute inset-0 rounded-full border-4 border-[var(--border)]" />
-                  <div 
-                    className="absolute inset-0 rounded-full border-4 border-[var(--primary)] border-t-transparent animate-spin-smooth"
-                    style={{ borderRightColor: 'transparent' }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[var(--primary)] font-mono text-xl font-bold">
-                      {Math.round(progress)}%
-                    </span>
-                  </div>
-                </div>
-
-                <div className="text-center space-y-2">
-                  <h3 className="text-xl font-['Syne'] font-bold text-[var(--text-1)] tracking-tight">
-                    Composing Masterpiece
-                  </h3>
-                  <p className="text-sm text-[var(--text-3)] font-mono uppercase tracking-[0.2em]">
-                    Phase: {status?.stage ?? 'Preparing...'}
-                  </p>
-                </div>
-
-                <div className="w-full max-w-md space-y-2">
-                   <div className="h-1.5 w-full bg-[var(--bg-elevated)] rounded-full overflow-hidden border border-[var(--border)]">
-                    <div 
-                      className="h-full bg-[var(--primary)] transition-all duration-300" 
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                  {error && (
-                    <div className="p-4 rounded-lg bg-[var(--error)] bg-opacity-10 border border-[var(--error)] border-opacity-20 text-[var(--error)] text-xs font-mono text-center">
-                      Error: {error}
-                    </div>
-                  )}
-                </div>
-              </div>
+              <ComposingBlock progress={progress} error={error} status={status} />
             )}
 
             {/* //make video very responsive */}

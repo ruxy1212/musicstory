@@ -196,27 +196,35 @@ const ComposedVideoPlayer: React.FC<ComposedVideoPlayerProps> = ({
 
   return (
     <div className={`w-full max-w-4xl mx-auto ${className}`}>
-      <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-[var(--border-hi)] bg-black shadow-[0_24px_64px_rgba(0,0,0,0.4)] group">
-        {playerState.isLoading && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-[var(--bg-surface)]">
-            <div className="text-center flex flex-col items-center gap-4">
-              <div className="relative">
-                <div className="w-12 h-12 rounded-full border-2 border-[var(--border)] border-t-[var(--primary)] animate-spin-smooth" />
-                <div className="absolute inset-0 rounded-full border-2 border-[var(--primary-glow)] blur-sm animate-pulse-dot" />
-              </div>
-              <p className="text-[11px] text-[var(--text-3)] font-mono uppercase tracking-[0.2em] animate-pulse">
-                Initializing Stream...
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* XGPlayer container */}
+      <div className="relative w-full">
         <div
-          ref={containerRef}
-          id={src}
-          className="w-full h-full"
-        />
+          className="relative w-full"
+        >
+          {playerState.isLoading && (
+            <div className="relative z-20 min-h-20 flex items-center justify-center bg-[var(--bg-surface)]">
+              <div className="text-center flex flex-col items-center gap-4">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full border-2 border-[var(--border)] border-t-[var(--primary)] animate-spin-smooth" />
+                  <div className="absolute inset-0 rounded-full border-2 border-[var(--primary-glow)] blur-sm animate-pulse-dot" />
+                </div>
+                <p className="text-[11px] text-[var(--text-3)] font-mono uppercase tracking-[0.2em] animate-pulse">
+                  Initializing Stream...
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* XGPlayer container */}
+          <div
+            ref={containerRef}
+            id={src}
+            className="absolute inset-0 h-full w-full overflow-hidden rounded-lg border border-[var(--border-hi)]"
+            style={{
+              backgroundColor: '#000',
+              aspectRatio: '16/9',
+            }}
+          />
+        </div>
       </div>
     </div>
   );
