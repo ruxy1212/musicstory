@@ -59,45 +59,48 @@ const Waveform = forwardRef<WaveformHandle, WaveformProps>(
 
       wsRef.current = ws
 
-      ws.on('loading', (pct: number) => setProgress(pct))
+      ws.on('loading', (pct: number) => {console.log('itisloading', pct);setProgress(pct)})
 
       ws.on('ready', () => {
-        setIsLoading(false)
-        const duration = ws.getDuration()
-        onReady(duration)
+        setProgress(100);
+        setTimeout(() => {
+          setIsLoading(false)
+          const duration = ws.getDuration()
+          onReady(duration)
 
-        const initialEnd = Math.max(12, Math.min(30, duration < 30 ? duration : 30))
-        const region = wsRegions.addRegion({
-          start: 0,
-          end: initialEnd,
-          drag: true,
-          resize: true,
-          color: 'rgba(91, 110, 245, 0.3)',
-        })
+          const initialEnd = Math.max(12, Math.min(30, duration < 30 ? duration : 30))
+          const region = wsRegions.addRegion({
+            start: 0,
+            end: initialEnd,
+            drag: true,
+            resize: true,
+            color: 'rgba(91, 110, 245, 0.3)',
+          })
 
-        region.on('update-end', () => {
-          let newStart = region.start
-          let newEnd = region.end
-          const currentDuration = newEnd - newStart
+          region.on('update-end', () => {
+            let newStart = region.start
+            let newEnd = region.end
+            const currentDuration = newEnd - newStart
 
-          if (currentDuration > 30) {
-            newEnd = newStart + 30
-          } else if (currentDuration < 12 && duration >= 12) {
-            newEnd = newStart + 12
-            if (newEnd > duration) {
-              newEnd = duration
-              newStart = Math.max(0, newEnd - 12)
+            if (currentDuration > 30) {
+              newEnd = newStart + 30
+            } else if (currentDuration < 12 && duration >= 12) {
+              newEnd = newStart + 12
+              if (newEnd > duration) {
+                newEnd = duration
+                newStart = Math.max(0, newEnd - 12)
+              }
             }
-          }
 
-          if (newStart !== region.start || newEnd !== region.end) {
-            region.setOptions({ start: newStart, end: newEnd })
-          }
-          onRegionChange(newStart, newEnd)
-        })
+            if (newStart !== region.start || newEnd !== region.end) {
+              region.setOptions({ start: newStart, end: newEnd })
+            }
+            onRegionChange(newStart, newEnd)
+          })
 
-        onRegionChange(0, initialEnd)
-        regionRef.current = region
+          onRegionChange(0, initialEnd)
+          regionRef.current = region
+        }, 750)
       })
 
       ws.on('timeupdate', (time: number) => {
