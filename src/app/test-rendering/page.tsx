@@ -112,7 +112,7 @@ export default function Test() {
       duration: res.segment.end - res.segment.start,
     }));
 
-    startRender(resultClean, audioDataUrlStatic, setUrl);
+    startRender(resultClean, audioDataUrlStatic, '', setUrl);
   };
 
   return (

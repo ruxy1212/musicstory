@@ -9,9 +9,9 @@ import Fallback from "./_ui/fallback-video";
 import ComposedVideoPlayer from "./_ui/composed-video-player";
 import { useRemotionRender } from "@/hooks/useMotionRenderer";
 import Logo from "@/components/common/logo";
-import { toast } from "sonner";
 import { useEffect } from "react";
-import { resultsStatic } from "@/app/test-rendering/page";
+import { useKeys } from "@/components/config/keys-context";
+import { toast } from "sonner";
 import SegmentList from "./_ui/segment-list";
 import ComposingBlock from "./_ui/composing-block";
 import ProgressBlock from "./_ui/progress-block";
@@ -19,6 +19,8 @@ import ProgressBlock from "./_ui/progress-block";
 // ─── Main component ───────────────────────────────────────────────────────────
 const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
   ({ title, token, enrichedTranscriptions, audioBlob }, ref) => {
+    const { userId } = useKeys();
+
     useImperativeHandle(ref, () => ({
       runGeneration,
     }));
@@ -94,6 +96,7 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
       await composeVideo({
         audioBlob,
         results,
+        userId,
         setComposedVideoUrl,
         startRender,
         setPhase,

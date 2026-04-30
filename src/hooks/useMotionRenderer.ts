@@ -14,6 +14,7 @@ export function useRemotionRender(serverHost = 'localhost:3001') {
   const startRender = useCallback((
     results: ResultClean[],
     audioUrl: string | null,
+    userId: string,
     setUrl: (url: string) => void
   ) => {
     if (!serverHost) {
@@ -36,7 +37,8 @@ export function useRemotionRender(serverHost = 'localhost:3001') {
       socket.send(JSON.stringify({
         type: "START_RENDER",
         results,
-        audioUrl
+        audioUrl,
+        userId
       }));
     };
 

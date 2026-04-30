@@ -7,7 +7,8 @@ interface KeysContextType {
   audioProvider: string;
   videoGenKey: string;
   saveToLocalStorage: boolean;
-  setKeys: (keys: Partial<Omit<KeysContextType, 'setKeys'>>) => void;
+  userId: string;
+  setKeys: (keys: Partial<Omit<KeysContextType, 'setKeys' | 'userId'>>) => void;
 }
 
 const KeysContext = createContext<KeysContextType | undefined>(undefined);
@@ -17,9 +18,18 @@ export const KeysProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [audioProvider, setAudioProvider] = useState('');
   const [videoGenKey, setVideoGenKey] = useState('');
   const [saveToLocalStorage, setSaveToLocalStorage] = useState(false);
+  const [userId, setUserId] = useState('');
 
   // Initialize from local storage
   useEffect(() => {
+    // Handle userId first (always persistent)
+    let currentUserId = localStorage.getItem('musicstory_userid');
+    if (!currentUserId) {
+      currentUserId = crypto.randomUUID();
+      localStorage.setItem('musicstory_userid', currentUserId);
+    }
+    setUserId(currentUserId);
+
     const saved = localStorage.getItem('musicstory_keys');
     if (saved) {
       try {
@@ -54,7 +64,7 @@ export const KeysProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <KeysContext.Provider value={{ textAudioKey, audioProvider, videoGenKey, saveToLocalStorage, setKeys }}>
+    <KeysContext.Provider value={{ textAudioKey, audioProvider, videoGenKey, saveToLocalStorage, userId, setKeys }}>
       {children}
     </KeysContext.Provider>
   );

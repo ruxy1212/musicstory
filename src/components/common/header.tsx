@@ -4,6 +4,12 @@ import { Home, Compass, PlusCircle, Settings } from "lucide-react";
 import ConfigModal from "@/components/config/config-modal";
 import Link from "next/link";
 
+const NAV_ITEMS = [
+  {link: '/', label: 'Home', Icon: Home },
+  {link: '/discover', label: 'Discover', Icon: Compass },
+  {link: '/create', label: 'Create', Icon: PlusCircle }
+];
+
 export default function Header({ location }: { location?: string }) {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
 
@@ -25,11 +31,7 @@ export default function Header({ location }: { location?: string }) {
         </div>
         <div className="flex items-center gap-[var(--stack-lg)]">
           <nav className="hidden md:flex gap-[var(--stack-md)] font-medium">
-            {[
-             {link: '/', label: 'Home', Icon: Home },
-             {link: '#', label: 'Discover', Icon: Compass },
-             {link: '/create', label: 'Create', Icon: PlusCircle }
-            ].map((item, i) => (
+            {NAV_ITEMS.map((item, i) => (
             <Link 
               key={i}
               href={item.link} 
@@ -58,11 +60,7 @@ export default function Header({ location }: { location?: string }) {
       </header>
       {/* Mobile Bottom NavBar */}
       <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-[#0D0B1F]/90 backdrop-blur-3xl rounded-t-[32px] border-t border-white/10 shadow-[0_-5px_20px_rgba(0,0,0,0.5)] md:hidden">
-        {[
-          {link: '/', label: 'Home', Icon: Home },
-          {link: '#', label: 'Discover', Icon: Compass },
-          {link: '/create', label: 'Create', Icon: PlusCircle }
-        ].map((item, i) => (
+        {NAV_ITEMS.map((item, i) => (
         <Link 
           key={i}
           href={item.link} 

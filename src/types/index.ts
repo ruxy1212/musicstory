@@ -83,3 +83,12 @@ export interface RenderProgress {
   message?: string;
   videoUrl?: string;
 }
+
+export interface GeneratedVideo {
+  id: string;
+  url: string;
+  thumbnailUrl?: string;
+  userId: string;
+  createdAt: string;
+  title?: string;
+}

@@ -4,9 +4,10 @@ import { Dispatch, SetStateAction } from "react";
 export interface ComposeVideoProps {
   audioBlob: Blob | null;
   results: SegmentResult[];
+  userId: string;
   setComposedVideoUrl: Dispatch<SetStateAction<string | null>>;
   setPhase: Dispatch<SetStateAction<"idle" | "generating" | "composing" | "done">>;
-  startRender: (results: ResultClean[], audioUrl: string | null, setUrl: (url: string) => void) => void;
+  startRender: (results: ResultClean[], audioUrl: string | null, userId: string, setUrl: (url: string) => void) => void;
 }
 
 // Point to your Render.com server URL.
@@ -16,6 +17,7 @@ const serverHost = process.env.NEXT_PUBLIC_RENDER_SERVER_DOMAIN?.replace(/^https
 export async function composeVideo({
   audioBlob,
   results,
+  userId,
   setComposedVideoUrl,
   setPhase,
   startRender,
@@ -37,7 +39,7 @@ export async function composeVideo({
       duration: res.segment.end - res.segment.start,
     }));
 
-    startRender(resultClean, audioDataUrl, setComposedVideoUrl);
+    startRender(resultClean, audioDataUrl, userId, setComposedVideoUrl);
     setPhase("done");
   } catch (err) {
     console.error("Render failed:", err);
