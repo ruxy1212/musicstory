@@ -13,6 +13,7 @@ import Logo from "@/components/common/logo";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { resultsStatic } from "@/app/test-rendering/page";
+import { AnimatePresence, motion } from "motion/react";
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
@@ -146,42 +147,58 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
             {phase === "generating" && (
               <div className="animate-fade-up">
                 {/* Segment list */}
-                <div className="flex flex-col gap-2 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                  {results.map((r, i) => (
-                    <div
-                      key={i}
-                      className="grid grid-cols-[32px_1fr_12px] items-center gap-4 p-4 rounded-xl border transition-all duration-300"
-                      style={{
-                        background: "var(--bg-elevated)",
-                        borderColor: r.status.stage === "generating" ? "var(--primary-glow)" : "var(--border)",
-                        boxShadow: r.status.stage === "generating" ? "0 0 20px var(--primary-dim)" : "none"
-                      }}
-                    >
-                      <span className="font-mono text-[11px] text-[var(--text-muted)] tabular-nums">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
+                <div className="relative flex flex-col min-h-50 justify-end mb-2">
+                  <div className="absolute w-full top-0 h-14 bg-gradient-to-b from-[var(--bg-surface)] to-transparent"></div>
+                  <div className="flex flex-col gap-2 max-h-100 overflow-y-auto pr-2 custom-scrollbar">
+                    <AnimatePresence initial={false}>
+                      {results.map((r, i) => (
+                        r.status.stage !== "pending" && (
+                          <motion.div
+                            key={i}
+                            layout
+                            initial={{ opacity: 0, height: 0, y: 20 }}
+                            animate={{ opacity: 1, height: "auto", y: 0 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 30,
+                              opacity: { duration: 0.2 }
+                            }}
+                            style={{
+                              background: "var(--bg-elevated)",
+                              borderColor: r.status.stage === "generating" ? "var(--primary-glow)" : "var(--border)",
+                              boxShadow: r.status.stage === "generating" ? "0 0 20px var(--primary-dim)" : "none"
+                            }}
+                            className="grid grid-cols-[32px_1fr_12px] items-center gap-4 p-4 rounded-xl border transition-all duration-300"
+                          >
+                            <span className="font-mono text-[11px] text-[var(--text-muted)] tabular-nums">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
 
-                      <div>
-                        <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed mb-1">
-                          {r.segment.text}
-                        </p>
-                        <p 
-                          className="font-mono text-[10px] uppercase tracking-wider"
-                          style={{ color: stageColor(r.status.stage) }}
-                        >
-                          {statusLabel(r)}
-                        </p>
-                      </div>
+                            <div>
+                              <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed mb-1">
+                                {r.segment.text}
+                              </p>
+                              <p 
+                                className="font-mono text-[10px] uppercase tracking-wider"
+                                style={{ color: stageColor(r.status.stage) }}
+                              >
+                                {statusLabel(r)}
+                              </p>
+                            </div>
 
-                      <div
-                        className="w-2 h-2 rounded-full"
-                        style={{
-                          background: stageColor(r.status.stage),
-                          boxShadow: r.status.stage === "generating" ? `0 0 10px ${stageColor(r.status.stage)}` : "none",
-                        }}
-                      />
-                    </div>
-                  ))}
+                            <div
+                              className="w-2 h-2 rounded-full"
+                              style={{
+                                background: stageColor(r.status.stage),
+                                boxShadow: r.status.stage === "generating" ? `0 0 10px ${stageColor(r.status.stage)}` : "none",
+                              }}
+                            />
+                          </motion.div>
+                        )
+                      ))}
+                    </AnimatePresence>
+                  </div>
                 </div>
 
                 {/* Progress summary */}
