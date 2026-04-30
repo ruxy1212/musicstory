@@ -18,7 +18,7 @@ import ProgressBlock from "./_ui/progress-block";
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
-  ({ title, token }, ref) => { //, enrichedTranscriptions, audioBlob
+  ({ title, token, enrichedTranscriptions, audioBlob }, ref) => {
     useImperativeHandle(ref, () => ({
       runGeneration,
     }));
@@ -31,23 +31,21 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
       startRender,
     } = useRemotionRender();
 
-    // const segments = enrichedTranscriptions?.segments ?? [];
+    const segments = enrichedTranscriptions?.segments ?? [];
 
-    // const [results, setResults] = useState<SegmentResult[]>(() =>
-    //   segments.map((seg, i) => ({
-    //     index: i,
-    //     segment: seg,
-    //     videoUrl: null,
-    //     seed: null,
-    //     status: initialStatus(),
-    //     failed: false,
-    //   }))
-    // );
-    const [results, setResults] = useState<SegmentResult[]>(resultsStatic);
-    const [phase, setPhase] = useState<"idle" | "generating" | "composing" | "done">("done");
+    const [results, setResults] = useState<SegmentResult[]>(() =>
+      segments.map((seg, i) => ({
+        index: i,
+        segment: seg,
+        videoUrl: null,
+        seed: null,
+        status: initialStatus(),
+        failed: false,
+      }))
+    );
 
-    // const [phase, setPhase] = useState<"idle" | "generating" | "composing" | "done">("idle");
-    const [composedVideoUrl, setComposedVideoUrl] = useState<string | null>("/samples/g5dmw7vws4ypr18m4iuf.mp4"); //null
+    const [phase, setPhase] = useState<"idle" | "generating" | "composing" | "done">("idle");
+    const [composedVideoUrl, setComposedVideoUrl] = useState<string | null>(null);
 
     // Watch for composition errors
     useEffect(() => {
@@ -62,51 +60,49 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
     async function runGeneration() {
       setPhase("generating");
 
-      // let firstQuotaIndex: number | null = null;
-      // for (let i = 0; i < segments.length; i++) {
-      //   const { quotaError } = await generateSegment({
-      //     seg: segments[i],
-      //     index: i,
-      //     token: "" as `hf_${string}`, // use IP quota
-      //     setResults,
-      //   });
+      let firstQuotaIndex: number | null = null;
+      for (let i = 0; i < segments.length; i++) {
+        const { quotaError } = await generateSegment({
+          seg: segments[i],
+          index: i,
+          token: "" as `hf_${string}`, // use IP quota
+          setResults,
+        });
 
-      //   if (quotaError) {
-      //     firstQuotaIndex = i;
-      //     toast.warning("Quota reached", {
-      //       description: "Switching to your HuggingFace token to continue..."
-      //     });
-      //     break;
-      //   }
-      // }
+        if (quotaError) {
+          firstQuotaIndex = i;
+          toast.warning("Quota reached", {
+            description: "Switching to your HuggingFace token to continue..."
+          });
+          break;
+        }
+      }
 
-      // if (firstQuotaIndex !== null) {
-      //   for (let i = firstQuotaIndex; i < segments.length; i++) {
-      //     await generateSegment({
-      //       seg: segments[i],
-      //       index: i,
-      //       token: token as `hf_${string}`, // use real token on retry
-      //       setResults,
-      //       isRetry: true,
-      //     });
-      //   }
-      // }
+      if (firstQuotaIndex !== null) {
+        for (let i = firstQuotaIndex; i < segments.length; i++) {
+          await generateSegment({
+            seg: segments[i],
+            index: i,
+            token: token as `hf_${string}`, // use real token on retry
+            setResults,
+            isRetry: true,
+          });
+        }
+      }
 
-      // setPhase("composing");
-      // await composeVideo({
-      //   audioBlob,
-      //   results,
-      //   setComposedVideoUrl,
-      //   startRender,
-      //   setPhase,
-      // });
+      setPhase("composing");
+      await composeVideo({
+        audioBlob,
+        results,
+        setComposedVideoUrl,
+        startRender,
+        setPhase,
+      });
     }
 
     const completedCount = results.filter((r) => r.status.stage === "complete").length;
     const failedCount = results.filter((r) => r.failed).length;
-    // const total = segments.length;
-    const total = resultsStatic.length;
-    const audioBlob = true;
+    const total = segments.length;
 
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--bg-base)] md:p-6 lg:p-8">

@@ -31,13 +31,13 @@ export default function Page() {
   return (
     <>
       <Header location="Create" />
-      {videoData && <AudioTrimmer onGenerate={generateVideo} setTitle={setTitle} />}
-      {!videoData && (
+      {!videoData && <AudioTrimmer onGenerate={generateVideo} setTitle={setTitle} />}
+      {videoData && (
         <VideoGenerator
           ref={videoRef}
           title={title}
-          // enrichedTranscriptions={videoData.transcriptions}
-          // audioBlob={videoData.blob}
+          enrichedTranscriptions={videoData.transcriptions}
+          audioBlob={videoData.blob}
           token={(hf_key || '') as `hf_${string}`}
         />
       )}
