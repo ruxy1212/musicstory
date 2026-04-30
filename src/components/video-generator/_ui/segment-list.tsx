@@ -1,6 +1,6 @@
 import { SegmentResult } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
-import { stageColor, statusLabel } from "@/components/video-generator/_fragments/render";
+import { stageColor, statusLabel, hashCyrb53 } from "@/components/video-generator/_fragments/render";
 
 export default function SegmentList({ results }: { results: SegmentResult[] }) {
   return (
@@ -33,8 +33,8 @@ export default function SegmentList({ results }: { results: SegmentResult[] }) {
                 </span>
 
                 <div>
-                  <p className="text-[13px] text-alter-secondary leading-relaxed mb-1">
-                    {r.segment.text}
+                  <p className="text-[13px] text-alter-secondary leading-relaxed mb-1 truncate">
+                    Segment ID: {hashCyrb53(r.segment.text)}
                   </p>
                   <p
                     className="font-mono text-[10px] uppercase tracking-wider"
