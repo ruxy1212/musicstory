@@ -1,5 +1,9 @@
-export const trimAudio = async (file: File | Blob, start: number, stop: number) => {
-  const audioCtx = new (window.AudioContext  || (window as any).webkitAudioContext)();
+export const trimAudio = async (
+  file: File | Blob,
+  start: number,
+  stop: number,
+) => {
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
   // Get audio data
   let arrayBuffer;
@@ -36,13 +40,13 @@ export const trimAudio = async (file: File | Blob, start: number, stop: number) 
 
   // Encode to WAV
   return encodeBufferToWavBlob(trimmedBuffer);
-}
+};
 
 const encodeBufferToWavBlob = (buffer: AudioBuffer) => {
   const numberOfChannels = buffer.numberOfChannels;
-  const length = (buffer.length * numberOfChannels * 2) + 44; //16-bit PCM
+  const length = buffer.length * numberOfChannels * 2 + 44; //16-bit PCM
   const bufferArray = new ArrayBuffer(length);
-  const view = new DataView(bufferArray)
+  const view = new DataView(bufferArray);
   const channels = [];
   let offset = 0;
   let pos = 0;
@@ -56,18 +60,27 @@ const encodeBufferToWavBlob = (buffer: AudioBuffer) => {
 
   // Write WAV Header
   setString('RIFF');
-  view.setUint32(pos, length - 8, true); pos += 4;
+  view.setUint32(pos, length - 8, true);
+  pos += 4;
   setString('WAVE');
   setString('fmt ');
-  view.setUint32(pos, 16, true); pos += 4;
-  view.setUint16(pos, 1, true); pos += 2; // PCM
-  view.setUint16(pos, numberOfChannels, true); pos += 2;
-  view.setUint32(pos, buffer.sampleRate, true); pos += 4;
-  view.setUint32(pos, buffer.sampleRate * 2 * numberOfChannels, true); pos += 4;
-  view.setUint16(pos, numberOfChannels * 2, true); pos += 2;
-  view.setUint16(pos, 16, true); pos += 2; // 16-bit
+  view.setUint32(pos, 16, true);
+  pos += 4;
+  view.setUint16(pos, 1, true);
+  pos += 2; // PCM
+  view.setUint16(pos, numberOfChannels, true);
+  pos += 2;
+  view.setUint32(pos, buffer.sampleRate, true);
+  pos += 4;
+  view.setUint32(pos, buffer.sampleRate * 2 * numberOfChannels, true);
+  pos += 4;
+  view.setUint16(pos, numberOfChannels * 2, true);
+  pos += 2;
+  view.setUint16(pos, 16, true);
+  pos += 2; // 16-bit
   setString('data');
-  view.setUint32(pos, length - pos - 4, true); pos += 4;
+  view.setUint32(pos, length - pos - 4, true);
+  pos += 4;
 
   // Interleave and write audio data
   for (let i = 0; i < buffer.numberOfChannels; i++) {
@@ -86,4 +99,4 @@ const encodeBufferToWavBlob = (buffer: AudioBuffer) => {
   }
 
   return new Blob([bufferArray], { type: 'audio/wav' });
-}
+};

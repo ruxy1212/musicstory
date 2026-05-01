@@ -1,57 +1,83 @@
-'use client'
+'use client';
 
-import { Play, Pause, Wand2 } from 'lucide-react'
+import { Play, Pause, Wand2 } from 'lucide-react';
 
 interface TransportControlsProps {
-  isPlaying: boolean
-  currentTime: number
-  regionStart: number
-  regionEnd: number
-  onPlay: () => void
-  onPause: () => void
-  onProcess: () => void
-  isReady: boolean
-  isProcessing: boolean
+  isPlaying: boolean;
+  currentTime: number;
+  regionStart: number;
+  regionEnd: number;
+  onPlay: () => void;
+  onPause: () => void;
+  onProcess: () => void;
+  isReady: boolean;
+  isProcessing: boolean;
 }
 
 function fmt(s: number) {
-  const m = Math.floor(s / 60)
-  const sec = Math.floor(s % 60)
-  const ms = Math.floor((s % 1) * 100)
-  return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(ms).padStart(2, '0')}`
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  const ms = Math.floor((s % 1) * 100);
+  return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
 }
 
 function fmtDur(s: number) {
-  return `${s.toFixed(1)}s`
+  return `${s.toFixed(1)}s`;
 }
 
 export default function TransportControls({
-  isPlaying, currentTime, regionStart, regionEnd,
-  onPlay, onPause, onProcess, isReady, isProcessing,
+  isPlaying,
+  currentTime,
+  regionStart,
+  regionEnd,
+  onPlay,
+  onPause,
+  onProcess,
+  isReady,
+  isProcessing,
 }: TransportControlsProps) {
-  const duration = regionEnd - regionStart
-  const elapsed = Math.max(0, Math.min(currentTime - regionStart, duration))
-  const pct = duration > 0 ? (elapsed / duration) * 100 : 0
+  const duration = regionEnd - regionStart;
+  const elapsed = Math.max(0, Math.min(currentTime - regionStart, duration));
+  const pct = duration > 0 ? (elapsed / duration) * 100 : 0;
 
   return (
     <div className="flex flex-col gap-3 animate-fade-up">
-
       {/* Timer strip */}
-      <div className="rounded-xl border border-[var(--border-hi)] bg-elevated overflow-hidden">
-
+      <div className="rounded-xl border border-(--border-hi) bg-elevated overflow-hidden">
         {/* Four time values */}
         <div className="grid grid-cols-2 divide-x divide-border md:grid-cols-4">
           {[
-            { label: 'Position', value: fmt(currentTime), color: 'text-[var(--text-1)]' },
-            { label: 'Region In', value: fmt(regionStart), color: 'text-primary' },
-            { label: 'Region Out', value: fmt(regionEnd), color: 'text-primary' },
-            { label: 'Duration', value: fmtDur(duration), color: 'text-accent' },
+            {
+              label: 'Position',
+              value: fmt(currentTime),
+              color: 'text-[var(--text-1)]',
+            },
+            {
+              label: 'Region In',
+              value: fmt(regionStart),
+              color: 'text-primary',
+            },
+            {
+              label: 'Region Out',
+              value: fmt(regionEnd),
+              color: 'text-primary',
+            },
+            {
+              label: 'Duration',
+              value: fmtDur(duration),
+              color: 'text-accent',
+            },
           ].map(({ label, value, color }) => (
-            <div key={label} className="flex flex-col gap-1 px-4 py-2 md:px-5 md:py-3">
-              <span className="font-mono text-[9px] tracking-[0.14em] uppercase text-[var(--text-3)]">
+            <div
+              key={label}
+              className="flex flex-col gap-1 px-4 py-2 md:px-5 md:py-3"
+            >
+              <span className="font-mono text-[9px] tracking-[0.14em] uppercase text-(--text-3)">
                 {label}
               </span>
-              <span className={`font-mono text-base font-medium leading-none tracking-tight ${color} md:text-lg`}>
+              <span
+                className={`font-mono text-base font-medium leading-none tracking-tight ${color} md:text-lg`}
+              >
                 {value}
               </span>
             </div>
@@ -61,7 +87,7 @@ export default function TransportControls({
         {/* Clip progress bar */}
         <div className="relative h-[2px] bg-border">
           <div
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary to-accent transition-all duration-75"
+            className="absolute inset-y-0 left-0 bg-linear-to-r from-primary to-accent transition-all duration-75"
             style={{ width: `${pct}%` }}
           />
           {/* Cursor dot */}
@@ -74,7 +100,6 @@ export default function TransportControls({
 
       {/* Buttons */}
       <div className="flex gap-3">
-
         {/* Play / Pause */}
         <button
           disabled={!isReady}
@@ -87,16 +112,17 @@ export default function TransportControls({
             'disabled:opacity-30 disabled:pointer-events-none',
             isPlaying
               ? 'bg-primary-dim border-primary text-white shadow-[0_0_16px_var(--primary-glow)]'
-              : 'bg-elevated border-[var(--border-hi)] text-[var(--text-2)]',
+              : 'bg-elevated border-(--border-hi) text-(--text-2)',
             !isPlaying && isReady
               ? 'hover:border-primary hover:text-white hover:shadow-[0_0_16px_var(--primary-glow)] hover:-translate-y-px'
               : '',
           ].join(' ')}
         >
-          {isPlaying
-            ? <Pause size={16} className="fill-current" />
-            : <Play size={16} className="fill-current" />
-          }
+          {isPlaying ? (
+            <Pause size={16} className="fill-current" />
+          ) : (
+            <Play size={16} className="fill-current" />
+          )}
           {isPlaying ? 'Pause' : 'Play'}
         </button>
 
@@ -108,7 +134,7 @@ export default function TransportControls({
           className={[
             'cursor-pointer group flex items-center justify-center gap-2.5 flex-1 h-9 rounded-xl md:h-11',
             'font-["Syne"] text-sm font-semibold tracking-wide text-white',
-            'bg-gradient-to-r from-primary to-[#7c3aed]',
+            'bg-linear-to-r from-primary to-[#7c3aed]',
             'shadow-[0_4px_16px_var(--primary-glow)]',
             'transition-all duration-200 outline-none',
             'hover:shadow-[0_6px_24px_var(--primary-glow)] hover:-translate-y-px hover:brightness-110',
@@ -130,5 +156,5 @@ export default function TransportControls({
         </button>
       </div>
     </div>
-  )
+  );
 }

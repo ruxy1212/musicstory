@@ -22,5 +22,5 @@ export function Providers({ children }: ProviderProps) {
         <Toaster position="bottom-right" richColors />
       </KeysProvider>
     </ProgressProvider>
-  )
+  );
 }

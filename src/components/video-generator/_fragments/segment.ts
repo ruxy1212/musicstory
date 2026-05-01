@@ -1,8 +1,8 @@
-import { Client } from "@gradio/client";
-import { EnrichedSegment, SegmentResult, SegmentStatus } from "@/types";
-import { clampDuration } from "@/utils/video/helpers";
-import { Dispatch, SetStateAction, useCallback } from "react";
-import { toast } from "sonner";
+import { Client, type Status, type Payload } from '@gradio/client';
+import type { EnrichedSegment, SegmentResult, SegmentStatus } from '@/types';
+import { clampDuration } from '@/utils/video/helpers';
+import type { Dispatch, SetStateAction } from 'react';
+import { toast } from 'sonner';
 
 interface GenerateSegmentProps {
   seg: EnrichedSegment;
@@ -11,80 +11,92 @@ interface GenerateSegmentProps {
   setResults: Dispatch<SetStateAction<SegmentResult[]>>;
 }
 
-export async function generateSegment({seg, index, token, setResults, isRetry = false}: GenerateSegmentProps & { isRetry?: boolean }) {
+export async function generateSegment({
+  seg,
+  index,
+  token,
+  setResults,
+  isRetry = false,
+}: GenerateSegmentProps & { isRetry?: boolean }) {
   const updateResult = (index: number, patch: Partial<SegmentResult>) => {
     setResults((prev) =>
-      prev.map((r) => (r.index === index ? { ...r, ...patch } : r))
+      prev.map((r) => (r.index === index ? { ...r, ...patch } : r)),
     );
   };
 
   const updateStatus = (index: number, patch: Partial<SegmentStatus>) => {
     setResults((prev) =>
       prev.map((r) =>
-        r.index === index ? { ...r, status: { ...r.status, ...patch } } : r
-      )
+        r.index === index ? { ...r, status: { ...r.status, ...patch } } : r,
+      ),
     );
   };
 
-  updateStatus(index, { stage: "generating", queue: true, time: new Date() });
+  updateStatus(index, { stage: 'generating', queue: true, time: new Date() });
 
   try {
-    const app = await Client.connect("Lightricks/ltx-video-distilled", {
+    const app = await Client.connect('Lightricks/ltx-video-distilled', {
       token: token,
-      events: ["data", "status"],
+      events: ['data', 'status'],
     });
 
     const duration = clampDuration(seg.start, seg.end);
 
-    const job = app.submit("/text_to_video", {
+    const job = app.submit('/text_to_video', {
       prompt: `${seg.prompt} \nContext: ${seg.context}`,
       negative_prompt:
-        "worst quality, inconsistent motion, blurry, jittery, distorted, low quality, watermark, text, ugly",
+        'worst quality, inconsistent motion, blurry, jittery, distorted, low quality, watermark, text, ugly',
       seed_ui: 42,
       randomize_seed: false,
-      mode: "text-to-video",
+      mode: 'text-to-video',
       duration_ui: duration,
     });
 
     for await (const msg of job) {
-      if (msg.type === "status") {
-        const s = msg as any;
+      if (msg.type === 'status') {
+        const s = msg as Status;
+        const statusMessage =
+          typeof s.message === 'string' ? s.message : 'Unknown error';
 
-        if (s.stage === "error") {
-          const isQuota = !isRetry && (s.message ?? "").toLowerCase().includes("quota");
+        if (s.stage === 'error') {
+          const isQuota =
+            !isRetry &&
+            typeof s.message === 'string' &&
+            ((s.message as string) ?? '').toLowerCase().includes('quota');
 
           updateResult(index, {
             failed: true,
             status: {
-              stage: "error",
+              stage: 'error',
               queue: false,
-              message: s.message ?? "Unknown error",
+              message: statusMessage,
               time: new Date(),
             },
           });
           toast.error(`Scene ${index + 1} failed`, {
-            description: s.message ?? "Unknown generation error"
+            description: statusMessage ?? 'Unknown generation error',
           });
           job.cancel();
           return { quotaError: isQuota };
         } else {
           updateStatus(index, {
-            stage: s.stage === "complete" ? "complete" : "generating",
+            stage: s.stage === 'complete' ? 'complete' : 'generating',
             queue: s.queue ?? false,
             code: s.code,
             success: s.success,
             size: s.size,
             position: s.position,
             eta: s.eta,
-            message: s.message,
+            message: statusMessage,
             progress_data: s.progress_data,
             time: s.time ? new Date(s.time) : new Date(),
           });
         }
       }
 
-      if (msg.type === "data") {
-        const [fileData, seed] = (msg as any).data as [
+      if (msg.type === 'data') {
+        const d = msg as Payload;
+        const [fileData, seed] = d.data as [
           {
             video: {
               url: string;
@@ -92,9 +104,9 @@ export async function generateSegment({seg, index, token, setResults, isRetry = 
               orig_name: string;
               mime_type: string;
               is_stream: boolean;
-            }
+            };
           },
-          number
+          number,
         ];
 
         const videoUrl = fileData?.video?.url ?? fileData?.video?.path ?? null;
@@ -103,24 +115,30 @@ export async function generateSegment({seg, index, token, setResults, isRetry = 
           videoUrl,
           seed,
           failed: !videoUrl,
-          status: { stage: "complete", queue: false, success: true, time: new Date() },
+          status: {
+            stage: 'complete',
+            queue: false,
+            success: true,
+            time: new Date(),
+          },
         });
         job.cancel();
         break;
       }
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     updateResult(index, {
       failed: true,
       status: {
-        stage: "error",
+        stage: 'error',
         queue: false,
-        message: err?.message ?? "Unknown error",
+        message: err instanceof Error ? err.message : 'Unknown error',
         time: new Date(),
       },
     });
     toast.error(`Scene ${index + 1} crashed`, {
-      description: err?.message ?? "Network or connection error"
+      description:
+        err instanceof Error ? err.message : 'Network or connection error',
     });
   }
 

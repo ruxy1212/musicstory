@@ -1,4 +1,4 @@
-import { SegmentStatus } from "@/types";
+import type { SegmentStatus } from '@/types';
 
 export function clampDuration(start: number, end: number): number {
   const raw = end - start;
@@ -6,5 +6,5 @@ export function clampDuration(start: number, end: number): number {
 }
 
 export function initialStatus(): SegmentStatus {
-  return { stage: "pending", queue: false };
+  return { stage: 'pending', queue: false };
 }

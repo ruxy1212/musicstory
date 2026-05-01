@@ -1,12 +1,16 @@
-import { RenderProgress } from "@/types"
+import type { RenderProgress } from '@/types';
 
 interface ComposingBlockProps {
-  progress: number
-  error: string | null
-  status: RenderProgress | null
+  progress: number;
+  error: string | null;
+  status: RenderProgress | null;
 }
 
-export default function ComposingBlock({ progress, error, status }: ComposingBlockProps) {
+export default function ComposingBlock({
+  progress,
+  error,
+  status,
+}: ComposingBlockProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12 gap-8 animate-fade-up">
       <div className="relative w-24 h-24">
@@ -23,10 +27,10 @@ export default function ComposingBlock({ progress, error, status }: ComposingBlo
       </div>
 
       <div className="text-center space-y-2">
-        <h3 className="text-xl font-['Syne'] font-bold text-[var(--text-1)] tracking-tight">
+        <h3 className="text-xl font-['Syne'] font-bold text-(--text-1) tracking-tight">
           Composing Masterpiece
         </h3>
-        <p className="text-sm text-[var(--text-3)] font-mono uppercase tracking-[0.2em]">
+        <p className="text-sm text-(--text-3) font-mono uppercase tracking-[0.2em]">
           Phase: {status?.stage ?? 'Preparing...'}
         </p>
       </div>
@@ -45,5 +49,5 @@ export default function ComposingBlock({ progress, error, status }: ComposingBlo
         )}
       </div>
     </div>
-  )
+  );
 }

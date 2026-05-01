@@ -1,37 +1,43 @@
-'use client'
+'use client';
 
-import { useRef, useState, useCallback } from 'react'
-import { Music, FileAudio } from 'lucide-react'
+import { useRef, useState, useCallback } from 'react';
+import { Music, FileAudio } from 'lucide-react';
 
 interface UploadZoneProps {
-  onFile: (file: File) => void
+  onFile: (file: File) => void;
 }
 
 export default function UploadZone({ onFile }: UploadZoneProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [isDragging, setIsDragging] = useState(false)
-  const [isError, setIsError] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  const handleFile = useCallback((file: File) => {
-    if (!file.type.startsWith('audio/')) {
-      setIsError(true)
-      setTimeout(() => setIsError(false), 1000)
-      return
-    }
-    onFile(file)
-  }, [onFile])
+  const handleFile = useCallback(
+    (file: File) => {
+      if (!file.type.startsWith('audio/')) {
+        setIsError(true);
+        setTimeout(() => setIsError(false), 1000);
+        return;
+      }
+      onFile(file);
+    },
+    [onFile],
+  );
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    const file = e.dataTransfer.files[0]
-    if (file) handleFile(file)
-  }, [handleFile])
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    },
+    [handleFile],
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) handleFile(file)
-  }
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+  };
 
   return (
     <div
@@ -41,7 +47,10 @@ export default function UploadZone({ onFile }: UploadZoneProps) {
       onClick={() => inputRef.current?.click()}
       onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
       onDrop={handleDrop}
-      onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragging(true);
+      }}
       onDragLeave={() => setIsDragging(false)}
       className={[
         'group relative flex flex-col items-center justify-center gap-5 px-10 py-16',
@@ -52,7 +61,7 @@ export default function UploadZone({ onFile }: UploadZoneProps) {
           ? 'border-accent shadow-[0_0_32px_var(--accent-glow)] scale-[1.01]'
           : isError
             ? 'border-error animate-shake'
-            : 'border-[var(--border-hi)] hover:border-primary hover:shadow-[0_0_24px_var(--primary-glow)] hover:-translate-y-0.5',
+            : 'border-(--border-hi) hover:border-primary hover:shadow-[0_0_24px_var(--primary-glow)] hover:-translate-y-0.5',
       ].join(' ')}
     >
       <input
@@ -64,18 +73,24 @@ export default function UploadZone({ onFile }: UploadZoneProps) {
       />
 
       {/* Icon */}
-      <div className={[
-        'flex items-center justify-center w-16 h-16 rounded-full',
-        'border transition-all duration-300',
-        'bg-elevated',
-        isDragging
-          ? 'border-accent shadow-[0_0_16px_var(--accent-glow)]'
-          : 'border-[var(--border-hi)] group-hover:border-primary group-hover:shadow-[0_0_14px_var(--primary-glow)]',
-      ].join(' ')}>
-        {isDragging
-          ? <FileAudio size={26} className="text-accent animate-bounce" />
-          : <Music size={26} className="text-[var(--text-2)] group-hover:text-primary transition-colors duration-300" />
-        }
+      <div
+        className={[
+          'flex items-center justify-center w-16 h-16 rounded-full',
+          'border transition-all duration-300',
+          'bg-elevated',
+          isDragging
+            ? 'border-accent shadow-[0_0_16px_var(--accent-glow)]'
+            : 'border-(--border-hi) group-hover:border-primary group-hover:shadow-[0_0_14px_var(--primary-glow)]',
+        ].join(' ')}
+      >
+        {isDragging ? (
+          <FileAudio size={26} className="text-accent animate-bounce" />
+        ) : (
+          <Music
+            size={26}
+            className="text-(--text-2) group-hover:text-primary transition-colors duration-300"
+          />
+        )}
       </div>
 
       {/* Text */}
@@ -90,15 +105,15 @@ export default function UploadZone({ onFile }: UploadZoneProps) {
           </span>
         ) : (
           <>
-            <span className="font-['Syne'] text-base font-semibold text-[var(--text-1)]">
+            <span className="font-['Syne'] text-base font-semibold text-(--text-1)">
               Drop audio here
             </span>
-            <span className="text-sm text-[var(--text-2)]">
+            <span className="text-sm text-(--text-2)">
               or{' '}
               <span className="text-primary underline underline-offset-2">
                 click to browse
-              </span>
-              {' '}— MP3, WAV, FLAC, M4A
+              </span>{' '}
+              — MP3, WAV, FLAC, M4A
             </span>
           </>
         )}
@@ -118,5 +133,5 @@ export default function UploadZone({ onFile }: UploadZoneProps) {
         />
       ))}
     </div>
-  )
+  );
 }

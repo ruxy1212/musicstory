@@ -1,121 +1,162 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import { GeneratedVideo } from "@/types";
-import { useKeys } from "@/components/config/keys-context";
-import { Loader2, Play, Heart, Share2, User, Globe } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-import { toast } from "sonner";
+import { useState, useEffect, useRef, useCallback, useReducer } from 'react';
+import type { GeneratedVideo } from '@/types';
+import { useKeys } from '@/components/config/keys-context';
+import { Loader2, Play, Heart, Share2, User, Globe } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'sonner';
 
-// In a real app, this would be a configured environment variable
-const serverUrl = process.env.NEXT_PUBLIC_RENDER_SERVER_URL || 'http://localhost:3001';
+const serverUrl =
+  process.env.NEXT_PUBLIC_RENDER_SERVER_URL || 'http://localhost:3001';
+
+// --- Reducer ---
+
+type State = {
+  videos: GeneratedVideo[];
+  loading: boolean;
+  hasMore: boolean;
+};
+
+type Action =
+  | { type: 'RESET' } // tab changed — wipe everything in one dispatch
+  | { type: 'FETCH_SUCCESS'; videos: GeneratedVideo[]; append: boolean }
+  | { type: 'FETCH_ERROR'; isFirstPage: boolean }
+  | { type: 'FETCH_START' };
+
+const initialState: State = {
+  videos: [],
+  loading: true,
+  hasMore: true,
+};
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'RESET':
+      // ✅ One dispatch replaces setVideos([]) + setLoading(true) + setHasMore(true)
+      return initialState;
+    case 'FETCH_START':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return {
+        loading: false,
+        hasMore: action.videos.length === 6,
+        videos: action.append
+          ? [...state.videos, ...action.videos]
+          : action.videos,
+      };
+    case 'FETCH_ERROR':
+      return {
+        loading: false,
+        hasMore: false,
+        videos: action.isFirstPage ? [] : state.videos,
+      };
+  }
+}
+
+// --- Component ---
 
 export default function VideoGallery() {
   const { userId } = useKeys();
-  const [activeTab, setActiveTab] = useState<"all" | "mine">("all");
-  const [videos, setVideos] = useState<GeneratedVideo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  
+  const [activeTab, setActiveTab] = useState<'all' | 'mine'>('all');
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { videos, loading, hasMore } = state;
+
+  const pageRef = useRef(1);
   const observerRef = useRef<HTMLDivElement>(null);
 
-  const fetchVideos = async (pageNum: number, isNewTab = false) => {
-    setLoading(true);
-    try {
-      // The render server should expose a /videos endpoint
-      const params = new URLSearchParams({
-        page: pageNum.toString(),
-        limit: "6", // Fetch 6 to fill a 3-column grid nicely
-        ...(activeTab === "mine" ? { userId } : {})
-      });
-      
-      const response = await fetch(`${serverUrl}/videos?${params.toString()}`);
-      if (!response.ok) throw new Error("Failed to fetch videos");
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        const videos = data.data
-        if (isNewTab) {
-          setVideos(videos || []);
-        } else {
-          setVideos(prev => [...prev, ...(videos || [])]);
+  const fetchVideos = useCallback(
+    async (pageNum: number, append = false) => {
+      dispatch({ type: 'FETCH_START' });
+      try {
+        const params = new URLSearchParams({
+          page: pageNum.toString(),
+          limit: '6',
+          ...(activeTab === 'mine' ? { userId } : {}),
+        });
+
+        const response = await fetch(
+          `${serverUrl}/videos?${params.toString()}`,
+        );
+        if (!response.ok) throw new Error('Failed to fetch videos');
+
+        const data = await response.json();
+
+        if (data.success) {
+          dispatch({
+            type: 'FETCH_SUCCESS',
+            videos: data.data ?? [],
+            append,
+          });
         }
-        
-        setHasMore(videos && videos.length === 6);
+      } catch (err: unknown) {
+        toast.error(
+          'Fetch error: ' +
+            (err instanceof Error ? err.message : 'Something went wrong'),
+        );
+        dispatch({ type: 'FETCH_ERROR', isFirstPage: pageNum === 1 });
       }
-      
-    } catch (err: unknown) {
-      toast.error("Fetch error: " + (err instanceof Error ? err.message : "Something went wrong"))
-      if (pageNum === 1) {
-         setVideos([]);
-      }
-      setHasMore(false);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [activeTab, userId],
+  );
 
+  // ✅ Single dispatch('RESET') replaces all synchronous setStates.
+  // fetchVideos is correctly listed and stable via useCallback.
   useEffect(() => {
-    setPage(1);
-    setVideos([]);
-    setHasMore(true);
-    fetchVideos(1, true);
-  }, [activeTab, userId]); // Include userId in case it changes (though it shouldn't)
+    pageRef.current = 1;
+    dispatch({ type: 'RESET' });
+    fetchVideos(1, false);
+  }, [fetchVideos]);
 
+  // ✅ Infinite scroll — pageRef mutation never triggers a render.
   useEffect(() => {
     if (!hasMore || loading) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          const nextPage = page + 1;
-          setPage(nextPage);
-          fetchVideos(nextPage);
+          pageRef.current += 1;
+          fetchVideos(pageRef.current, true);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
-
+    if (observerRef.current) observer.observe(observerRef.current);
     return () => observer.disconnect();
-  }, [hasMore, loading, page, activeTab]);
+  }, [hasMore, loading, fetchVideos]);
 
   return (
-    <div className="w-full max-w-[var(--container-max)] mx-auto px-6 py-20 min-h-screen">
+    <div className="w-full max-w-(--container-max) mx-auto px-6 py-20 min-h-screen">
       <div className="flex flex-col items-center gap-8 mb-16 animate-fade-up">
         <div className="text-center space-y-4">
           <h2 className="text-4xl md:text-6xl font-display font-bold text-gradient italic tracking-tight">
             Visual Journeys
           </h2>
           <p className="text-alter-secondary text-sm md:text-base max-w-lg mx-auto">
-            Explore cinematic stories generated by the community or revisit your own creations.
+            Explore cinematic stories generated by the community or revisit your
+            own creations.
           </p>
         </div>
-        
-        {/* Tabs Control */}
+
         <div className="flex p-1.5 bg-[#0D0B1F]/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
           <button
-            onClick={() => setActiveTab("all")}
+            onClick={() => setActiveTab('all')}
             className={`flex items-center gap-2.5 px-8 py-3 rounded-xl transition-all duration-300 font-bold text-sm uppercase tracking-widest ${
-              activeTab === "all" 
-                ? "bg-gradient-to-r from-indigo-600 to-cyan-500 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)]" 
-                : "text-white/40 hover:text-white/80"
+              activeTab === 'all'
+                ? 'bg-linear-to-r from-indigo-600 to-cyan-500 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)]'
+                : 'text-white/40 hover:text-white/80'
             }`}
           >
             <Globe size={16} />
             <span>Community</span>
           </button>
           <button
-            onClick={() => setActiveTab("mine")}
+            onClick={() => setActiveTab('mine')}
             className={`flex items-center gap-2.5 px-8 py-3 rounded-xl transition-all duration-300 font-bold text-sm uppercase tracking-widest ${
-              activeTab === "mine" 
-                ? "bg-gradient-to-r from-indigo-600 to-cyan-500 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)]" 
-                : "text-white/40 hover:text-white/80"
+              activeTab === 'mine'
+                ? 'bg-linear-to-r from-indigo-600 to-cyan-500 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)]'
+                : 'text-white/40 hover:text-white/80'
             }`}
           >
             <User size={16} />
@@ -124,7 +165,6 @@ export default function VideoGallery() {
         </div>
       </div>
 
-      {/* Video Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <AnimatePresence mode="popLayout">
           {videos.map((video, idx) => (
@@ -133,8 +173,10 @@ export default function VideoGallery() {
         </AnimatePresence>
       </div>
 
-      {/* Infinite Scroll Trigger & Status */}
-      <div ref={observerRef} className="w-full py-20 flex flex-col items-center justify-center gap-6">
+      <div
+        ref={observerRef}
+        className="w-full py-20 flex flex-col items-center justify-center gap-6"
+      >
         {loading && (
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
@@ -143,18 +185,18 @@ export default function VideoGallery() {
             </span>
           </div>
         )}
-        
+
         {!hasMore && videos.length > 0 && (
           <div className="flex flex-col items-center gap-4 opacity-30">
-            <div className="h-px w-20 bg-gradient-to-r from-transparent via-white to-transparent" />
+            <div className="h-px w-20 bg-linear-to-r from-transparent via-white to-transparent" />
             <span className="text-white font-mono text-[10px] uppercase tracking-[0.3em]">
               End of visual sequence
             </span>
           </div>
         )}
-        
+
         {!loading && videos.length === 0 && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="flex flex-col items-center gap-6 text-white/20 py-20"
@@ -163,8 +205,12 @@ export default function VideoGallery() {
               <Play size={32} className="ml-1 opacity-20" />
             </div>
             <div className="text-center">
-              <p className="font-display text-xl font-bold text-white/40 mb-1">Silence in the Studio</p>
-              <p className="text-xs uppercase tracking-widest">No videos found in this frequency</p>
+              <p className="font-display text-xl font-bold text-white/40 mb-1">
+                Silence in the Studio
+              </p>
+              <p className="text-xs uppercase tracking-widest">
+                No videos found in this frequency
+              </p>
             </div>
           </motion.div>
         )}
@@ -175,7 +221,7 @@ export default function VideoGallery() {
 
 function VideoCard({ video }: { video: GeneratedVideo }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  
+
   const handleMouseEnter = () => {
     videoRef.current?.play().catch(() => {});
   };
@@ -206,42 +252,42 @@ function VideoCard({ video }: { video: GeneratedVideo }) {
           loop
           playsInline
         />
-        
+
         {/* Hover Controls Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0B1F] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-           <div className="w-full flex justify-between items-center text-white">
-             <a 
-               href={video.url} 
-               target="_blank" 
-               rel="noopener noreferrer"
-               className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-cyan-400 transition-colors bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10"
-             >
-               <Play size={12} fill="currentColor" /> Full View
-             </a>
-             <div className="flex gap-4">
-               <button className="hover:text-red-500 transition-colors transform hover:scale-110 active:scale-95">
-                 <Heart size={18} />
-               </button>
-               <button className="hover:text-cyan-400 transition-colors transform hover:scale-110 active:scale-95">
-                 <Share2 size={18} />
-               </button>
-             </div>
-           </div>
+        <div className="absolute inset-0 bg-linear-to-t from-[#0D0B1F] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+          <div className="w-full flex justify-between items-center text-white">
+            <a
+              href={video.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-cyan-400 transition-colors bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10"
+            >
+              <Play size={12} fill="currentColor" /> Full View
+            </a>
+            <div className="flex gap-4">
+              <button className="hover:text-red-500 transition-colors transform hover:scale-110 active:scale-95">
+                <Heart size={18} />
+              </button>
+              <button className="hover:text-cyan-400 transition-colors transform hover:scale-110 active:scale-95">
+                <Share2 size={18} />
+              </button>
+            </div>
+          </div>
         </div>
-        
+
         {/* Play Icon Hint (Mobile/Always Visible) */}
         <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md p-2 rounded-full border border-white/10 opacity-60 group-hover:opacity-0 transition-opacity">
           <Play size={14} className="text-white fill-white" />
         </div>
       </div>
-      
-      <div className="p-6 bg-gradient-to-b from-white/5 to-transparent backdrop-blur-xl border-t border-white/5">
+
+      <div className="p-6 bg-linear-to-b from-white/5 to-transparent backdrop-blur-xl border-t border-white/5">
         <h3 className="font-display font-bold text-lg text-white truncate mb-2 group-hover:text-cyan-400 transition-colors">
-          {video.title || "Celestial Journey"}
+          {video.title || 'Celestial Journey'}
         </h3>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-[8px] font-bold text-white uppercase">
+            <div className="w-6 h-6 rounded-full bg-linear-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-[8px] font-bold text-white uppercase">
               {video.userId.slice(0, 2)}
             </div>
             <span className="text-[10px] text-white/40 font-mono tracking-widest uppercase">
@@ -249,7 +295,10 @@ function VideoCard({ video }: { video: GeneratedVideo }) {
             </span>
           </div>
           <span className="text-[9px] text-white/20 font-bold tracking-widest uppercase bg-white/5 px-2 py-1 rounded-md">
-            {new Date(video.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+            {new Date(video.createdAt).toLocaleDateString(undefined, {
+              month: 'short',
+              day: 'numeric',
+            })}
           </span>
         </div>
       </div>

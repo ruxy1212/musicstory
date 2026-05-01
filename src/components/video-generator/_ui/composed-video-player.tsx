@@ -123,8 +123,7 @@ const ComposedVideoPlayer: React.FC<ComposedVideoPlayerProps> = ({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         playerInstance.on('error', (error: any) => {
           const errorMessage =
-            error?.message ||
-            'An error occurred while loading the video';
+            error?.message || 'An error occurred while loading the video';
           setPlayerState((prev) => ({
             ...prev,
             error: errorMessage,
@@ -179,14 +178,28 @@ const ComposedVideoPlayer: React.FC<ComposedVideoPlayerProps> = ({
       <div className={`w-full max-w-4xl mx-auto ${className}`}>
         <div className="rounded-xl border border-error bg-elevated p-6 shadow-[0_0_24px_rgba(239,68,68,0.1)]">
           <div className="flex items-center gap-4">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-error bg-opacity-10 flex items-center justify-center">
-              <svg className="h-6 w-6 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <div className="shrink-0 w-10 h-10 rounded-full bg-error bg-opacity-10 flex items-center justify-center">
+              <svg
+                className="h-6 w-6 text-error"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
               </svg>
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[var(--text-1)] font-['Syne']">Video Initialization Error</h3>
-              <p className="mt-1 text-xs text-[var(--text-3)] font-mono">{playerState.error}</p>
+              <h3 className="text-sm font-bold text-(--text-1) font-['Syne']">
+                Video Initialization Error
+              </h3>
+              <p className="mt-1 text-xs text-(--text-3) font-mono">
+                {playerState.error}
+              </p>
             </div>
           </div>
         </div>
@@ -197,9 +210,7 @@ const ComposedVideoPlayer: React.FC<ComposedVideoPlayerProps> = ({
   return (
     <div className={`w-full max-w-4xl mx-auto ${className}`}>
       <div className="relative w-full">
-        <div
-          className="relative w-full"
-        >
+        <div className="relative w-full">
           {playerState.isLoading && (
             <div className="relative z-20 min-h-20 flex items-center justify-center bg-surface">
               <div className="text-center flex flex-col items-center gap-4">
@@ -207,7 +218,7 @@ const ComposedVideoPlayer: React.FC<ComposedVideoPlayerProps> = ({
                   <div className="w-12 h-12 rounded-full border-2 border-border border-t-primary animate-spin-smooth" />
                   <div className="absolute inset-0 rounded-full border-2 border-primary-glow blur-sm animate-pulse-dot" />
                 </div>
-                <p className="text-[11px] text-[var(--text-3)] font-mono uppercase tracking-[0.2em] animate-pulse">
+                <p className="text-[11px] text-(--text-3) font-mono uppercase tracking-[0.2em] animate-pulse">
                   Initializing Stream...
                 </p>
               </div>
@@ -218,7 +229,7 @@ const ComposedVideoPlayer: React.FC<ComposedVideoPlayerProps> = ({
           <div
             ref={containerRef}
             id={src}
-            className="absolute inset-0 h-full w-full overflow-hidden rounded-lg border border-[var(--border-hi)]"
+            className="absolute inset-0 h-full w-full overflow-hidden rounded-lg border border-(--border-hi)"
             style={{
               backgroundColor: '#000',
               aspectRatio: '16/9',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Save, Settings } from 'lucide-react';
 import { useKeys } from './keys-context';
@@ -13,18 +13,24 @@ interface ConfigModalProps {
 }
 
 export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
-  const { textAudioKey, audioProvider, videoGenKey, saveToLocalStorage, setKeys } = useKeys();
+  const {
+    textAudioKey,
+    audioProvider,
+    videoGenKey,
+    saveToLocalStorage,
+    setKeys,
+  } = useKeys();
   const [localTextAudioKey, setLocalTextAudioKey] = useState(textAudioKey);
   const [localAudioProvider, setLocalAudioProvider] = useState(audioProvider);
   const [localVideoGenKey, setLocalVideoGenKey] = useState(videoGenKey);
   const [localSave, setLocalSave] = useState(saveToLocalStorage);
 
-  useEffect(() => {
-    setLocalAudioProvider(audioProvider)
-    setLocalTextAudioKey(textAudioKey)
-    setLocalVideoGenKey(videoGenKey)
-    setLocalSave(saveToLocalStorage)
-  }, [audioProvider, textAudioKey, videoGenKey])
+  // useEffect(() => {
+  //   setLocalAudioProvider(audioProvider);
+  //   setLocalTextAudioKey(textAudioKey);
+  //   setLocalVideoGenKey(videoGenKey);
+  //   setLocalSave(saveToLocalStorage);
+  // }, [audioProvider, textAudioKey, videoGenKey, saveToLocalStorage]);
 
   const handleSave = () => {
     setKeys({
@@ -33,8 +39,8 @@ export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
       videoGenKey: localVideoGenKey,
       saveToLocalStorage: localSave,
     });
-    toast.success("Configuration saved", {
-      description: "Your API keys have been updated."
+    toast.success('Configuration saved', {
+      description: 'Your API keys have been updated.',
     });
     onClose();
   };
@@ -49,11 +55,11 @@ export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-100 bg-black/60 backdrop-blur-sm"
           />
 
           {/* Modal Container */}
-          <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none">
+          <div className="fixed inset-0 z-101 flex items-center justify-center p-4 pointer-events-none">
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -66,7 +72,9 @@ export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
                   <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400">
                     <Settings className="w-5 h-5" />
                   </div>
-                  <h2 className="text-xl font-bold text-white">Config Settings</h2>
+                  <h2 className="text-xl font-bold text-white">
+                    Config Settings
+                  </h2>
                 </div>
                 <button
                   onClick={onClose}
@@ -80,10 +88,14 @@ export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
               <div className="p-4 space-y-8">
                 {/* Text & Audio Section */}
                 <div className="space-y-4">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40">Text & Audio</h3>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40">
+                    Text & Audio
+                  </h3>
                   <div className="flex gap-4">
                     <div className="flex-1 space-y-2">
-                      <label className="text-xs text-white/60 ml-1">API Key</label>
+                      <label className="text-xs text-white/60 ml-1">
+                        API Key
+                      </label>
                       <input
                         type="password"
                         value={localTextAudioKey}
@@ -93,15 +105,25 @@ export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
                       />
                     </div>
                     <div className="w-1/3 space-y-2">
-                      <label className="text-xs text-white/60 ml-1">Provider</label>
+                      <label className="text-xs text-white/60 ml-1">
+                        Provider
+                      </label>
                       <select
                         value={localAudioProvider}
                         onChange={(e) => setLocalAudioProvider(e.target.value)}
                         className="w-full capitalize bg-[#1A1635] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500/50 transition-colors appearance-none cursor-pointer md:px-4 md:py-3"
                       >
-                        <option value="" className="capitalize">Choose Provider</option>
+                        <option value="" className="capitalize">
+                          Choose Provider
+                        </option>
                         {Object.keys(providers).map((provider, i) => (
-                          <option key={i} value={provider} className="capitalize">{provider}</option>
+                          <option
+                            key={i}
+                            value={provider}
+                            className="capitalize"
+                          >
+                            {provider}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -110,9 +132,13 @@ export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
 
                 {/* Video Generation Section */}
                 <div className="space-y-4">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40">Video Generation</h3>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-white/40">
+                    Video Generation
+                  </h3>
                   <div className="space-y-2">
-                    <label className="text-xs text-white/60 ml-1">HuggingFace Token</label>
+                    <label className="text-xs text-white/60 ml-1">
+                      HuggingFace Token
+                    </label>
                     <input
                       type="password"
                       value={localVideoGenKey}
@@ -121,25 +147,31 @@ export default function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white placeholder:text-white/20 focus:outline-none focus:border-indigo-500/50 transition-colors md:px-4 md:py-3"
                     />
                     <p className="text-[10px] text-white/30 italic ml-1">
-                      Optional, but will guarantee higher quota for HuggingFace Pro users.
+                      Optional, but will guarantee higher quota for HuggingFace
+                      Pro users.
                     </p>
                   </div>
                 </div>
 
                 {/* Save Preference */}
-                <button 
+                <button
                   className="flex items-center gap-3 pt-2"
                   onClick={() => setLocalSave(!localSave)}
                 >
-                  <div  
-                    className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${localSave
+                  <div
+                    className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${
+                      localSave
                         ? 'bg-indigo-600 border-indigo-600'
                         : 'bg-white/5 border-white/10 hover:border-white/20'
-                      }`}
+                    }`}
                   >
-                    {localSave && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+                    {localSave && (
+                      <div className="w-2.5 h-2.5 bg-white rounded-full" />
+                    )}
                   </div>
-                  <span className="text-sm text-white/70">Save key to localstorage</span>
+                  <span className="text-sm text-white/70">
+                    Save key to localstorage
+                  </span>
                 </button>
               </div>
 

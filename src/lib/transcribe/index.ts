@@ -1,29 +1,33 @@
-import { TranscriptionResponse, TranscriptionSegment } from "@/types";
-import OpenAI, { toFile } from "openai";
-import { providerClient, providers } from "@/lib/providers";
+import type { TranscriptionResponse, TranscriptionSegment } from '@/types';
+import type OpenAI from 'openai';
+import { toFile } from 'openai';
+import { providerClient, providers } from '@/lib/providers';
 
 // Providers that return verbose_json with segments
 const transcriptionViaAPI = async (
   client: OpenAI,
   audio: File | Blob,
-  provider: keyof typeof providers
+  provider: keyof typeof providers,
 ): Promise<TranscriptionResponse> => {
-  const file = audio instanceof File
-    ? audio
-    : await toFile(audio, "audio.wav", { type: "audio/wav" });
+  const file =
+    audio instanceof File
+      ? audio
+      : await toFile(audio, 'audio.wav', { type: 'audio/wav' });
 
   const transcription = await client.audio.transcriptions.create({
     file,
     model: providers[provider].transcription_model,
-    response_format: "verbose_json",
+    response_format: 'verbose_json',
   });
 
   // verbose_json returns segments with start/end timestamps
-  const segments: TranscriptionSegment[] = (transcription.segments ?? []).map((s) => ({
-    start: s.start,
-    end: s.end,
-    text: s.text.trim(),
-  }));
+  const segments: TranscriptionSegment[] = (transcription.segments ?? []).map(
+    (s) => ({
+      start: s.start,
+      end: s.end,
+      text: s.text.trim(),
+    }),
+  );
 
   return {
     text: transcription.text,
@@ -35,19 +39,19 @@ const transcriptionViaAPI = async (
 const transcriptionViaChat = async (
   client: OpenAI,
   audio: File | Blob,
-  provider: keyof typeof providers
+  provider: keyof typeof providers,
 ): Promise<TranscriptionResponse> => {
   const arrayBuffer = await audio.arrayBuffer();
-  const base64Audio = Buffer.from(arrayBuffer).toString("base64");
+  const base64Audio = Buffer.from(arrayBuffer).toString('base64');
 
   const response = await client.chat.completions.create({
     model: providers[provider].transcription_model,
     messages: [
       {
-        role: "user",
+        role: 'user',
         content: [
           {
-            type: "text",
+            type: 'text',
             text: `Transcribe this audio exactly. 
 Return ONLY a JSON object in this format, no markdown, no explanation:
 {
@@ -59,10 +63,10 @@ Return ONLY a JSON object in this format, no markdown, no explanation:
 Each segment should cover roughly 3 seconds of audio.`,
           },
           {
-            type: "input_audio",
+            type: 'input_audio',
             input_audio: {
               data: base64Audio,
-              format: "wav",
+              format: 'wav',
             },
           },
         ],
@@ -70,7 +74,7 @@ Each segment should cover roughly 3 seconds of audio.`,
     ],
   });
 
-  const raw = response.choices[0].message.content ?? "{}";
+  const raw = response.choices[0].message.content ?? '{}';
 
   try {
     const parsed = JSON.parse(raw) as TranscriptionResponse;
@@ -84,16 +88,16 @@ Each segment should cover roughly 3 seconds of audio.`,
 export const audioTranscribeAI = async (
   audio: File | Blob,
   apiKey: string,
-  provider: keyof typeof providers
+  provider: keyof typeof providers,
 ): Promise<TranscriptionResponse> => {
   if (!apiKey || !provider) {
-    throw new Error("Missing API Key or Provider");
+    throw new Error('Missing API Key or Provider');
   }
 
   const config = providers[provider];
   const client = providerClient(provider, apiKey);
 
-  if (config.method === "chat") {
+  if (config.method === 'chat') {
     return transcriptionViaChat(client, audio, provider);
   }
 

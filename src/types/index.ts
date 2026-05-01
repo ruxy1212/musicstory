@@ -25,7 +25,7 @@ export interface EnrichedTranscription {
 }
 
 export interface SegmentStatus {
-  stage: "pending" | "generating" | "complete" | "error";
+  stage: 'pending' | 'generating' | 'complete' | 'error';
   queue: boolean;
   code?: string;
   success?: boolean;
@@ -78,7 +78,14 @@ export interface VideoGeneratorHandle {
 }
 
 export interface RenderProgress {
-  stage: 'bundling' | 'composing' | 'rendering' | 'uploading' | 'complete' | 'error' | 'started';
+  stage:
+    | 'bundling'
+    | 'composing'
+    | 'rendering'
+    | 'uploading'
+    | 'complete'
+    | 'error'
+    | 'started';
   progress?: number;
   message?: string;
   videoUrl?: string;

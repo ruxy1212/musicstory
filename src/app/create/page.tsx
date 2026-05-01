@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import AudioTrimmer from "@/components/trimmer/audio-trimmer"
-import { useEffect, useRef, useState } from "react"
-import { EnrichedTranscription, VideoGeneratorHandle } from '@/types'
-import VideoGenerator from "@/components/video-generator"
-import { useKeys } from "@/components/config/keys-context"
-import Header from "@/components/common/header"
+import AudioTrimmer from '@/components/trimmer/audio-trimmer';
+import { useEffect, useRef, useState } from 'react';
+import type { EnrichedTranscription, VideoGeneratorHandle } from '@/types';
+import VideoGenerator from '@/components/video-generator';
+import { useKeys } from '@/components/config/keys-context';
+import Header from '@/components/common/header';
 
 export default function Page() {
   const { videoGenKey: hf_key } = useKeys();
@@ -13,14 +13,17 @@ export default function Page() {
   const videoRef = useRef<VideoGeneratorHandle>(null);
   const [title, setTitle] = useState('no-title');
   const [videoData, setVideoData] = useState<{
-    blob: Blob,
-    transcriptions: EnrichedTranscription
+    blob: Blob;
+    transcriptions: EnrichedTranscription;
   } | null>(null);
 
-  const generateVideo = (audioBlob: Blob, transcriptions: EnrichedTranscription) => {
-    if (!audioBlob || !transcriptions) return
+  const generateVideo = (
+    audioBlob: Blob,
+    transcriptions: EnrichedTranscription,
+  ) => {
+    if (!audioBlob || !transcriptions) return;
     setVideoData({ blob: audioBlob, transcriptions });
-  }
+  };
 
   useEffect(() => {
     if (videoData && videoRef.current) {
@@ -31,7 +34,9 @@ export default function Page() {
   return (
     <>
       <Header location="Create" />
-      {!videoData && <AudioTrimmer onGenerate={generateVideo} setTitle={setTitle} />}
+      {!videoData && (
+        <AudioTrimmer onGenerate={generateVideo} setTitle={setTitle} />
+      )}
       {videoData && (
         <VideoGenerator
           ref={videoRef}
@@ -42,5 +47,5 @@ export default function Page() {
         />
       )}
     </>
-  )
+  );
 }
