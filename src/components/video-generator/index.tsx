@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import SegmentList from './_ui/segment-list';
 import ComposingBlock from './_ui/composing-block';
 import ProgressBlock from './_ui/progress-block';
+import { pollServer, wakeServer } from './_fragments/health-check';
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
@@ -64,7 +65,7 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
     // Generate all segments sequentially
     async function runGeneration() {
       setPhase('generating');
-
+      wakeServer();
       let firstQuotaIndex: number | null = null;
       for (let i = 0; i < segments.length; i++) {
         const { quotaError } = await generateSegment({
@@ -96,6 +97,11 @@ const VideoGenerator = forwardRef<VideoGeneratorHandle, VideoGeneratorProps>(
       }
 
       setPhase('composing');
+      const serverReady = await pollServer();
+      if (!serverReady) {
+        setPhase('done');
+        return;
+      }
       await composeVideo({
         audioBlob,
         results,

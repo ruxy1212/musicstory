@@ -6,11 +6,7 @@ import { useKeys } from '@/components/config/keys-context';
 import { Loader2, Play, Heart, Share2, User, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
-
-const serverUrl =
-  process.env.NEXT_PUBLIC_RENDER_SERVER_URL || 'http://localhost:3001';
-
-// --- Reducer ---
+import { RENDER_SERVER_URL } from '@/utils/video/constants';
 
 type State = {
   videos: GeneratedVideo[];
@@ -76,7 +72,7 @@ export default function VideoGallery() {
         });
 
         const response = await fetch(
-          `${serverUrl}/videos?${params.toString()}`,
+          `${RENDER_SERVER_URL}/videos?${params.toString()}`,
         );
         if (!response.ok) throw new Error('Failed to fetch videos');
 

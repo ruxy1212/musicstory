@@ -1,10 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { ResultClean, RenderProgress } from '@/types';
+import {
+  RENDER_API_TOKEN,
+  RENDER_SERVER_DOMAIN,
+} from '@/utils/video/constants';
 
 export function useRemotionRender() {
-  const serverHost =
-    process.env.NEXT_PUBLIC_RENDER_SERVER_DOMAIN || 'localhost:3001';
-  const serverToken = process.env.NEXT_PUBLIC_RENDER_API_TOKEN || '';
   const [isRendering, setIsRendering] = useState(false);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<RenderProgress | null>(null);
@@ -20,7 +21,7 @@ export function useRemotionRender() {
       userId: string,
       setUrl: (url: string) => void,
     ) => {
-      if (!serverHost) {
+      if (!RENDER_SERVER_DOMAIN) {
         setError('Server URL is not configured');
         return;
       }
@@ -33,7 +34,7 @@ export function useRemotionRender() {
       // Determine protocol (wss for production https, ws for local http)
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
       const socket = new WebSocket(
-        `${protocol}://${serverHost}?token=${serverToken}`,
+        `${protocol}://${RENDER_SERVER_DOMAIN}?token=${RENDER_API_TOKEN}`,
       );
       socketRef.current = socket;
 
@@ -85,7 +86,7 @@ export function useRemotionRender() {
         setIsRendering(false);
       };
     },
-    [serverHost, serverToken],
+    [],
   );
 
   // Cleanup on unmount
