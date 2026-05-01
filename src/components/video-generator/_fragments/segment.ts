@@ -55,8 +55,7 @@ export async function generateSegment({
     for await (const msg of job) {
       if (msg.type === 'status') {
         const s = msg as Status;
-        const statusMessage =
-          typeof s.message === 'string' ? s.message : 'Unknown error';
+        const statusMessage = typeof s.message === 'string' ? s.message : '';
 
         if (s.stage === 'error') {
           const isQuota =
@@ -69,7 +68,7 @@ export async function generateSegment({
             status: {
               stage: 'error',
               queue: false,
-              message: statusMessage,
+              message: statusMessage || 'Unknown error',
               time: new Date(),
             },
           });

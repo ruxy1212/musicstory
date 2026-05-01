@@ -140,7 +140,7 @@ const Waveform = forwardRef<WaveformHandle, WaveformProps>(
         wsRef.current = null;
         regionRef.current = null;
       };
-    }, [file, onPlayStateChange, onReady, onRegionChange, onTimeUpdate]);
+    }, [file]);
 
     return (
       <div className="relative rounded-xl overflow-hidden bg-elevated border border-(--border-hi)">

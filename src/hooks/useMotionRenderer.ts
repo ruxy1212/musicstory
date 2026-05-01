@@ -1,7 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { ResultClean, RenderProgress } from '@/types';
 
-export function useRemotionRender(serverHost = 'localhost:3001') {
+export function useRemotionRender() {
+  const serverHost =
+    process.env.NEXT_PUBLIC_RENDER_SERVER_DOMAIN || 'localhost:3001';
   const serverToken = process.env.NEXT_PUBLIC_RENDER_API_TOKEN || '';
   const [isRendering, setIsRendering] = useState(false);
   const [progress, setProgress] = useState(0);

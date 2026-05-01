@@ -87,7 +87,7 @@ export default function AudioTrimmer({
         throw new Error('Invalid transcription received');
       }
 
-      toast.loading('Enriching scenes with AI...', { id: toastId });
+      toast.loading('Enriching scenes...', { id: toastId });
       const enrichedTranscription = await fetch('/api/enrich', {
         method: 'POST',
         headers: {
