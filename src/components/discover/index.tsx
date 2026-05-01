@@ -288,10 +288,10 @@ function VideoCard({ video }: { video: GeneratedVideo }) {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-full bg-linear-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-[8px] font-bold text-white uppercase">
-              {video.userId.slice(0, 2)}
+              {video.userId?.slice(0, 2) ?? 'Guest User'}
             </div>
             <span className="text-[10px] text-white/40 font-mono tracking-widest uppercase">
-              User_{video.userId.slice(0, 6)}
+              {video.userId ? 'user_' + video.userId.slice(0, 6) : 'anonymous'}
             </span>
           </div>
           <span className="text-[9px] text-white/20 font-bold tracking-widest uppercase bg-white/5 px-2 py-1 rounded-md">
