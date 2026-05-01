@@ -6,25 +6,34 @@ MusicStory transforms your audio tracks into cinematic visual journeys. By analy
 
 - **Audio Ingestion**: Visual trimming interface powered by `wavesurfer.js`.
 - **AI Enrichment**: Deep analysis of audio content to generate cinematic scene prompts.
-- **Scene Generation**: High-fidelity 16:9 video segments generated using LTX Video models.
+- **Scene Generation**: High-fidelity 16:9 video segments generated using AI models (e.g., LTX Video).
 - **Remotion Engine**: Professional video composition with smooth transitions and dynamic motion.
-- **BYOK Architecture**: Bring Your Own Key support for OpenAI, Gemini, Groq, OpenRouter, DeepSeek, Mistral and Hugging Face (optional for higher daily quota).
+- **BYOK Architecture**: Bring Your Own Key support for OpenAI, Gemini, Groq, OpenRouter, DeepSeek, Mistral, and Hugging Face (optional for higher video generation daily quota).
 - **Real-time Rendering**: Live progress tracking via WebSocket connection to a dedicated rendering server.
 
-## 🛠️ Tech Stack
+## Application Flow
+
+1.  **Audio Setup**: Upload your track and trim the segment you want to visualize.
+2.  **AI Enrichment**: The system analyzes your audio/lyrics to create a storyboard with tailored visual prompts.
+3.  **Visual Generation**: Each scene is generated as a high-quality video clip using distributed AI workers.
+4.  **Server Initialization**: The app automatically wakes up the **Remotion Rendering Server** and waits for the bundle to be ready.
+5.  **Composition**: Scenes are sent to the rendering server via WebSocket for final assembly, including background audio and cinematic transitions.
+6.  **Delivery**: Receive a high-quality MP4 file ready for sharing.
+
+## Tech Stack
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
 - **Video Engine**: [Remotion](https://www.remotion.dev/)
-- **UI & Styling**: Tailwind CSS v4, Framer Motion, Lucide Icons
+- **UI & Styling**: Tailwind CSS v4, Framer Motion, Lucide Icons, Sonner
 - **Audio**: Wavesurfer.js
 - **AI Interaction**: OpenAI SDK, @gradio/client
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
 - [pnpm](https://pnpm.io/) installed.
-- Access to an external **Remotion Rendering Server** (or run one locally).
+- A running instance of the **MusicStory Render Server**.
 
 ### Installation
 
@@ -34,8 +43,10 @@ MusicStory transforms your audio tracks into cinematic visual journeys. By analy
    pnpm install
    ```
 3. Set up environment variables:
-   Create a `.env.local` file:
+   Create a `.env.local` file or `cp .env.example .env`:
    ```bash
+   NEXT_PUBLIC_RENDER_API_TOKEN=your_secret_token
+   NEXT_PUBLIC_RENDER_SERVER_URL=http://localhost:3001
    NEXT_PUBLIC_RENDER_SERVER_DOMAIN=localhost:3001
    ```
 
@@ -48,14 +59,16 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) to start creating.
 
-## 📡 Video Rendering (WebSocket)
+## Video Rendering Server
 
-This application coordinates video composition through an external rendering service.
-- **Hook**: `useRemotionRender` establishes a WebSocket connection.
-- **Protocol**: Sends a `START_RENDER` message with scene metadata and audio data.
-- **Updates**: Receives real-time progress percentages and status stages (`generating`, `encoding`, `muxing`).
-- **Result**: Streams the final video URL upon completion.
+This application requires an external rendering service to handle the heavy lifting of video composition.
 
-## 📄 License
+- **Repository**: [musicstory-render](https://github.com/ruxy1212/musicstory-render)
+- **Health Check**: The app pings `/health` to wake the server and polls for `bundleReady: true` before initiating renders.
+- **Protocol**: WebSocket-based communication for real-time progress updates (`generating`, `encoding`, `muxing`).
+- **Authentication**: Simple Security via `NEXT_PUBLIC_RENDER_API_TOKEN` (which can obviously be exposed in browsers).
+
+## License
 
 This project is licensed under the **MIT License**.
+
